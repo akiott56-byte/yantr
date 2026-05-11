@@ -219,6 +219,41 @@
       .animate-float-y {
         animation: floatY 3.2s ease-in-out infinite;
       }
+      @keyframes requirementFill {
+        from {
+          transform: scaleX(0);
+          opacity: 0.35;
+        }
+        to {
+          transform: scaleX(1);
+          opacity: 1;
+        }
+      }
+      @keyframes requirementBlink {
+        0%,
+        100% {
+          opacity: 0.32;
+        }
+        50% {
+          opacity: 0.85;
+        }
+      }
+      .requirement-fill {
+        transform-origin: left center;
+        animation: requirementFill 900ms ease-out forwards;
+      }
+      .requirement-fill-delay-1 {
+        animation-delay: 120ms;
+      }
+      .requirement-fill-delay-2 {
+        animation-delay: 260ms;
+      }
+      .requirement-fill-delay-3 {
+        animation-delay: 420ms;
+      }
+      .requirement-ping {
+        animation: requirementBlink 2.2s ease-in-out infinite;
+      }
       @keyframes heroLetterFloat {
         0%,
         100% {
@@ -736,8 +771,8 @@
           <!-- Headline stats -->
           <div class="grid grid-cols-3 gap-6 sm:gap-10 mb-14">
             <div>
-              <p class="text-4xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900">500<span class="text-2xl sm:text-3xl text-gray-400 font-semibold ml-1">MB</span></p>
-              <p class="mt-2 text-sm text-gray-600 leading-relaxed">RAM to start</p>
+              <p class="text-4xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900">140<span class="text-2xl sm:text-3xl text-gray-400 font-semibold ml-1">MB</span></p>
+              <p class="mt-2 text-sm text-gray-600 leading-relaxed">RAM minimum for Yantr itself</p>
             </div>
             <div>
               <p class="text-4xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900">1<span class="text-2xl sm:text-3xl text-gray-400 font-semibold ml-1">core</span></p>
@@ -760,7 +795,54 @@
                 <span class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">Minimum · Gets it running</span>
               </div>
               <h3 class="text-xl font-bold font-sans text-gray-900">Just enough</h3>
-              <p class="mt-2 text-sm text-gray-600 leading-relaxed">A spare laptop, a Raspberry Pi 4, an old NUC, or a $5 VPS. Plenty for a dashboard and a handful of small apps.</p>
+              <p class="mt-2 text-sm text-gray-600 leading-relaxed">A spare laptop, a Raspberry Pi 4, an old NUC, or a tiny VPS. Yantr itself stays light, then app RAM scales only when you turn apps on.</p>
+
+              <div class="mt-6 rounded-2xl bg-gray-50 p-4 sm:p-5">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-500">Animated RAM budget</p>
+                    <div class="mt-2 flex items-end gap-2">
+                      <span class="text-3xl font-bold font-sans tracking-tight text-gray-900">140 MB</span>
+                      <span class="text-sm text-gray-500 mb-1">minimum practical headroom</span>
+                    </div>
+                  </div>
+                  <p class="max-w-xs text-xs leading-relaxed text-gray-500">About half is the daemon at idle. The rest leaves breathing room for Docker, the web UI, and the host OS.</p>
+                </div>
+
+                <div class="mt-4 h-3 overflow-hidden rounded-full bg-white shadow-inner">
+                  <div class="flex h-full w-full">
+                    <div class="requirement-fill requirement-fill-delay-1 flex h-full items-center justify-end bg-gray-900" style="width: 48%">
+                      <span class="requirement-ping mr-1.5 h-1.5 w-1.5 rounded-full bg-white/80"></span>
+                    </div>
+                    <div class="requirement-fill requirement-fill-delay-2 h-full bg-gray-500" style="width: 29%"></div>
+                    <div class="requirement-fill requirement-fill-delay-3 h-full bg-gray-300" style="width: 23%"></div>
+                  </div>
+                </div>
+
+                <div class="mt-4 grid grid-cols-1 gap-2 text-xs text-gray-600 sm:grid-cols-3">
+                  <div class="rounded-xl bg-white px-3 py-2">
+                    <div class="flex items-center justify-between gap-3">
+                      <span class="font-medium text-gray-900">Yantr daemon</span>
+                      <span class="font-semibold text-gray-900">~67 MB</span>
+                    </div>
+                    <p class="mt-1 text-gray-500">Node.js API, UI server, and orchestration loop.</p>
+                  </div>
+                  <div class="rounded-xl bg-white px-3 py-2">
+                    <div class="flex items-center justify-between gap-3">
+                      <span class="font-medium text-gray-900">Docker + UI overhead</span>
+                      <span class="font-semibold text-gray-900">~41 MB</span>
+                    </div>
+                    <p class="mt-1 text-gray-500">Socket calls, browser session, and container bookkeeping.</p>
+                  </div>
+                  <div class="rounded-xl bg-white px-3 py-2">
+                    <div class="flex items-center justify-between gap-3">
+                      <span class="font-medium text-gray-900">Safety margin</span>
+                      <span class="font-semibold text-gray-900">~32 MB</span>
+                    </div>
+                    <p class="mt-1 text-gray-500">Keeps startup responsive instead of memory-starved.</p>
+                  </div>
+                </div>
+              </div>
 
               <dl class="mt-7 divide-y divide-gray-100 text-sm">
                 <div class="flex items-baseline justify-between py-3">
@@ -773,7 +855,7 @@
                 </div>
                 <div class="flex items-baseline justify-between py-3">
                   <dt class="text-gray-500">RAM</dt>
-                  <dd class="text-gray-900 font-medium text-right">500 MB</dd>
+                  <dd class="text-gray-900 font-medium text-right">140 MB for Yantr itself</dd>
                 </div>
                 <div class="flex items-baseline justify-between py-3">
                   <dt class="text-gray-500">Software</dt>
