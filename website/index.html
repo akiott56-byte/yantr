@@ -345,6 +345,85 @@
       #copy-install.copied .check-icon {
         display: block;
       }
+      #copy-install .copied-label {
+        display: none;
+      }
+      #copy-install.copied .copy-label {
+        display: none;
+      }
+      #copy-install.copied .copied-label {
+        display: inline;
+      }
+      @keyframes installCardFloat {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-4px);
+        }
+      }
+      @keyframes installTopBarPulse {
+        0%,
+        100% {
+          transform: scaleX(0.58);
+          opacity: 0.45;
+        }
+        50% {
+          transform: scaleX(1);
+          opacity: 1;
+        }
+      }
+      @keyframes installDotPulse {
+        0%,
+        100% {
+          transform: translateY(0px) scale(0.9);
+          opacity: 0.3;
+        }
+        50% {
+          transform: translateY(-2px) scale(1.08);
+          opacity: 1;
+        }
+      }
+      @keyframes installStepReveal {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes installCommandBreath {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(17, 24, 39, 0.04);
+        }
+        50% {
+          box-shadow: 0 18px 30px -24px rgba(17, 24, 39, 0.28);
+        }
+      }
+      .install-shell {
+        animation: installCardFloat 7s ease-in-out infinite;
+      }
+      .install-shell:hover {
+        animation-play-state: paused;
+      }
+      .install-top-bar {
+        transform-origin: left center;
+        animation: installTopBarPulse 3.6s ease-in-out infinite;
+      }
+      .install-orbit-dot {
+        animation: installDotPulse 2.4s ease-in-out infinite;
+      }
+      .install-step {
+        opacity: 0;
+        animation: installStepReveal 700ms ease-out forwards;
+      }
+      .install-command-surface {
+        animation: installCommandBreath 4.8s ease-in-out infinite;
+      }
       @keyframes marquee-left {
         0% {
           transform: translateX(0);
@@ -546,73 +625,93 @@
           </div>
 
           <div class="w-full max-w-4xl mt-12 animate-fade-in-up delay-200" id="install">
-            <div class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white/70 shadow-lg shadow-gray-200/40">
-              <div class="px-6 py-6 sm:px-8 sm:py-8">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-5 gap-4">
-                  <div>
-                    <h3 class="text-base font-bold text-gray-900 tracking-tight flex items-center gap-2">
-                      <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                      Install via Docker
-                    </h3>
-                    <p class="text-xs text-gray-500 mt-1">One command. Zero host dependencies.</p>
-                  </div>
+            <div class="install-shell relative overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-2xl shadow-gray-200/50 backdrop-blur-sm sm:mx-auto">
+              <!-- Window top bar -->
+              <div class="flex items-center justify-between border-b border-gray-200 bg-gray-50/80 px-4 py-3 sm:px-6">
+                <div class="flex items-center gap-2 text-xs font-mono font-medium text-gray-500">
+                  <span class="flex gap-1.5 mr-2">
+                    <span class="h-3 w-3 rounded-full bg-red-400"></span>
+                    <span class="h-3 w-3 rounded-full bg-amber-400"></span>
+                    <span class="h-3 w-3 rounded-full bg-emerald-400"></span>
+                  </span>
+                  ~
+                </div>
+                <div class="flex items-center gap-2 text-[10px] font-mono font-medium uppercase tracking-wider text-gray-400">
+                  <span class="bg-white border border-gray-200 shadow-sm px-2 py-0.5 rounded-md">Linux</span>
+                  <span class="bg-white border border-gray-200 shadow-sm px-2 py-0.5 rounded-md">macOS</span>
+                  <span class="bg-white border border-gray-200 shadow-sm px-2 py-0.5 rounded-md">WSL2</span>
+                  <span class="bg-white border border-gray-200 shadow-sm px-2 py-0.5 rounded-md">ARM</span>
+                </div>
+              </div>
 
-                  <div class="flex items-center gap-2 text-[10px] font-mono font-medium uppercase tracking-wider text-gray-400">
-                    <span class="bg-gray-100/80 px-2 py-1 rounded">Linux</span>
-                    <span class="bg-gray-100/80 px-2 py-1 rounded">macOS</span>
-                    <span class="bg-gray-100/80 px-2 py-1 rounded">WSL2</span>
-                    <span class="bg-gray-100/80 px-2 py-1 rounded">ARM</span>
-                  </div>
+              <div class="px-5 py-6 sm:px-10 sm:py-10 bg-gradient-to-b from-gray-50/30 to-white">
+                <div class="mb-8 max-w-lg">
+                  <h3 class="text-xl sm:text-2xl font-bold font-sans tracking-tight text-gray-900 mb-2">Install via Docker in 60s</h3>
+                  <p class="text-sm text-gray-600 leading-relaxed font-sans">
+                    The entire Yantr runtime is a single container. It deploys instantly, binds to its own isolated networks, and never litters your host OS.
+                  </p>
                 </div>
 
-                <div class="relative group">
-                  <div
-                    class="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none border border-gray-200/50"
-                  ></div>
-
-                  <div class="relative flex items-stretch">
-                    <div class="bg-gray-50 border border-gray-200 rounded-l-xl px-4 py-4 sm:px-6 flex items-center justify-center border-r-0">
-                      <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-                      </svg>
-                    </div>
+                <!-- Command Box -->
+                <div class="relative group mt-4">
+                  <div class="absolute -inset-1 rounded-2xl bg-gradient-to-r from-emerald-100 to-emerald-500/10 opacity-0 blur transition duration-500 group-hover:opacity-100 mix-blend-multiply"></div>
+                  
+                  <div class="relative flex flex-col sm:flex-row overflow-hidden rounded-xl border border-gray-300 bg-gray-900 shadow-lg group-hover:border-gray-400 transition-colors">
+                    <label class="flex items-center gap-2 border-b border-gray-800 bg-black/40 px-4 py-3 sm:border-b-0 sm:border-r sm:px-5 font-mono text-xs font-semibold text-gray-400">
+                      <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.5)]"></span>
+                      cli
+                    </label>
                     <code
                       id="install-cmd"
-                      class="flex-1 block text-left text-sm sm:text-[13px] text-gray-800 whitespace-pre-wrap break-all leading-relaxed bg-white border border-gray-200 px-4 py-4 sm:px-6 font-mono selection:bg-gray-900 selection:text-white"
-                      >docker run -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/besoeasy/yantr</code
-                    >
+                      class="flex-1 block overflow-x-auto text-left text-[13px] text-gray-100 whitespace-nowrap bg-transparent px-4 py-4 sm:px-6 font-mono leading-relaxed"
+                    ><span class="text-pink-400">docker</span> run -d --name yantr --network host <span class="text-sky-300">\\</span><br/>  -v /var/run/docker.sock:/var/run/docker.sock <span class="text-sky-300">\\</span><br/>  -v /var/lib/docker/volumes:/var/lib/docker/volumes <span class="text-sky-300">\\</span><br/>  --restart unless-stopped ghcr.io/besoeasy/yantr</code>
 
                     <button
                       id="copy-install"
                       onclick="
-                        navigator.clipboard.writeText('docker run -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/besoeasy/yantr').then(() => {
+                        navigator.clipboard.writeText('docker run -d --name yantr --network host -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes --restart unless-stopped ghcr.io/besoeasy/yantr').then(() => {
                           const b = document.getElementById('copy-install');
                           b.classList.add('copied');
                           setTimeout(() => b.classList.remove('copied'), 2000);
                         })
                       "
-                      class="flex items-center justify-center bg-gray-900 hover:bg-black text-white px-5 sm:px-6 rounded-r-xl transition-colors min-w-15 cursor-pointer"
+                      class="flex items-center justify-center gap-2 bg-emerald-500 px-6 py-4 font-sans text-sm font-bold text-emerald-950 transition-all hover:bg-emerald-400 sm:rounded-r-xl"
                       title="Copy command"
                     >
                       <svg class="copy-icon h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                        ></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                       </svg>
-                      <svg class="check-icon hidden h-4 w-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      <svg class="check-icon hidden h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
                       </svg>
+                      <span class="copy-label">Copy</span>
+                      <span class="copied-label">Copied!</span>
                     </button>
                   </div>
                 </div>
 
-                <div class="mt-4 flex justify-between items-center text-xs text-gray-400">
-                  <p class="text-xs text-gray-500 mt-1">Runs on <span class="font-mono">localhost:5252</span></p>
-                  <a href="install-docker.html" class="prominent-link text-sm transition-colors font-medium">How do I install Docker? &rarr;</a>
+                <div class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-t border-gray-100 pt-6">
+                  <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-100 border border-gray-200">
+                      <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold font-sans text-gray-900">Then jump into localhost</p>
+                      <p class="text-xs text-gray-500 mt-0.5">Yantr starts immediately at <code class="bg-gray-100 text-gray-600 px-1 py-0.5 rounded ml-0.5">localhost:5252</code></p>
+                    </div>
+                  </div>
+
+                  <a href="./install-docker.html" class="group flex items-center justify-between sm:w-auto gap-3 rounded-xl border border-gray-200 bg-white px-4 py-2 hover:border-gray-400 hover:bg-gray-50 transition-all font-sans text-sm">
+                    <span class="text-gray-600 font-medium group-hover:text-gray-900">Don't have Docker?</span>
+                    <span class="flex items-center gap-1 text-emerald-600 font-semibold group-hover:text-emerald-500">
+                      Guide
+                      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </span>
+                  </a>
                 </div>
               </div>
             </div>
