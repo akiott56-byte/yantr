@@ -583,7 +583,7 @@
   <body class="bg-white text-black font-mono antialiased selection:bg-black selection:text-white overflow-x-hidden">
     <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-24 relative">
       <!-- Hero -->
-      <div class="min-h-screen mb-0 flex flex-col justify-center relative z-10 py-16 sm:py-20">
+      <div class="min-h-screen mb-0 flex flex-col justify-center relative z-10 py-16 sm:py-20 overflow-hidden">
         <!-- Hero Background Animation Container -->
         <div id="hero-stars" class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"></div>
         <!-- Radial fade so orbiting chips don't overlap the text -->
@@ -705,6 +705,25 @@
         </div>
       </div>
 
+      <!-- App marquees — seamless continuation of the hero, full-bleed -->
+      <div class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden pt-4 pb-14" style="background-image:radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px);background-size:24px 24px;">
+        <div class="overflow-hidden py-2 w-full">
+          <div class="flex items-center gap-3 app-marquee-track app-marquee-left" id="hero-app-marquee-1"></div>
+        </div>
+        <div class="overflow-hidden py-2 w-full">
+          <div class="flex items-center gap-3 app-marquee-track app-marquee-right" id="hero-app-marquee-2"></div>
+        </div>
+        <div class="mt-10 flex justify-center">
+          <a
+            href="./catalog/"
+            class="inline-flex items-center gap-2 rounded-xl border border-black bg-black text-white px-6 py-3 text-sm font-semibold hover:bg-white hover:text-black transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
+          >
+            Browse the full catalog
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+
       <!-- Features Section -->
       <section id="features" class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 py-20 border-t border-gray-100 bg-white overflow-hidden">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
@@ -737,54 +756,6 @@
           </div>
         </div>
       </section>
-
-      <!-- App Catalog Showcase -->
-      <section
-        id="hero-apps-showcase"
-        class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 flex flex-col items-center justify-center border-t border-gray-100 bg-white overflow-hidden py-20"
-      >
-        <!-- Dot grid texture -->
-        <div class="absolute inset-0 pointer-events-none" style="background-image:radial-gradient(circle, rgba(0,0,0,0.055) 1px, transparent 1px);background-size:24px 24px;"></div>
-        <!-- Edge fade masks -->
-        <div
-          class="pointer-events-none absolute inset-y-0 left-0 w-32 sm:w-48 z-10"
-          style="background: none;"
-        ></div>
-        <div
-          class="pointer-events-none absolute inset-y-0 right-0 w-32 sm:w-48 z-10"
-          style="background: none;"
-        ></div>
-
-        <!-- Headline -->
-        <div class="relative z-20 text-center px-4 mb-12">
-          <p class="text-[11px] uppercase tracking-[0.25em] text-gray-400 font-semibold mb-3">App Catalog</p>
-          <h2 class="text-3xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900 mb-4">Popular server apps,<br class="hidden sm:block"/> one command away</h2>
-          <p class="text-gray-500 font-sans max-w-lg mx-auto text-base leading-relaxed">
-            From AI models and media servers to password managers — browse, pick, deploy.
-          </p>
-        </div>
-
-        <!-- Row 1: left -->
-        <div class="overflow-hidden py-2 w-full">
-          <div class="flex items-center gap-3 app-marquee-track app-marquee-left" id="hero-app-marquee-1"></div>
-        </div>
-        <!-- Row 2: right -->
-        <div class="overflow-hidden py-2 w-full">
-          <div class="flex items-center gap-3 app-marquee-track app-marquee-right" id="hero-app-marquee-2"></div>
-        </div>
-        <!-- CTA -->
-        <div class="relative z-20 mt-12">
-          <a
-            href="./catalog/"
-            class="inline-flex items-center gap-2 rounded-xl border border-black bg-black text-white px-6 py-3 text-sm font-semibold hover:bg-white hover:text-black transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
-          >
-            Browse the full catalog
-            <span aria-hidden="true">→</span>
-          </a>
-        </div>
-      </section>
-
-      <!-- Architecture Diagram Section removed -->
 
       <!-- Contributors Section -->
       <section id="contributors" class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 bg-black py-24 sm:py-32 overflow-hidden">
