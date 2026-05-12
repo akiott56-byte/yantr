@@ -2,7 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Cloud, CheckCircle2, AlertCircle, Settings, ArrowRight, ShieldCheck, Zap } from 'lucide-vue-next'
+import { Cloud, HardDrive, ArrowRight, Settings } from 'lucide-vue-next'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -51,91 +51,84 @@ onMounted(() => {
 <template>
   <div
     @click="goToConfig"
-    class="relative group h-full flex flex-col bg-white dark:bg-[#0A0A0A] rounded-xl p-6 cursor-pointer overflow-hidden transition-all duration-400 hover:shadow-2xl hover:shadow-black/5 dark:hover:shadow-black/40 hover:-translate-y-1"
+    class="group relative flex h-full flex-col overflow-hidden rounded-[1.4rem] bg-white dark:bg-[#0A0A0A] smooth-shadow cursor-pointer transition-all duration-300 hover:-translate-y-0.5 hover:smooth-shadow-lg"
   >
-    <!-- Hover Accents -->
-    <div class="absolute top-0 left-0 w-full h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        :class="isConfigured ? 'bg-blue-500' : 'bg-amber-500'">
-    </div>
+    <div class="absolute right-5 top-5 h-16 w-16 rounded-full transition-all duration-500 group-hover:scale-125"
+         :class="isConfigured ? 'bg-blue-500/6 blur-2xl group-hover:bg-blue-500/10' : 'bg-amber-500/6 blur-2xl group-hover:bg-amber-500/10'"></div>
 
-    <div class="relative z-10 flex items-start justify-between mb-6">
-      <div class="flex items-center gap-4">
-        <!-- Icon Container -->
-        <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-500"
-             :class="isConfigured ? 'bg-blue-50/50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20' : 'bg-amber-50/50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20'">
-          <Cloud class="w-5 h-5" :class="isConfigured ? 'text-blue-600 dark:text-blue-500' : 'text-amber-600 dark:text-amber-500'" />
+    <div class="relative z-10 flex h-full flex-col p-5">
+      <!-- Header -->
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-all duration-500 group-hover:scale-105 group-hover:-rotate-6"
+               :class="isConfigured ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' : 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500'">
+            <Cloud class="h-4 w-4" />
+          </div>
+          <div class="min-w-0">
+            <h3 class="text-sm font-semibold tracking-tight text-(--text-primary) group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              {{ t('quickMetrics.backupStatus.title') }}
+            </h3>
+            <div class="flex items-center gap-1.5 mt-0.5">
+              <span class="h-1.5 w-1.5 rounded-full shrink-0"
+                    :class="loading ? 'bg-gray-400 animate-pulse' : isConfigured ? 'bg-green-500' : 'bg-amber-500 animate-pulse'"></span>
+              <span class="text-[10px] font-bold uppercase tracking-wider"
+                    :class="isConfigured ? 'text-(--text-secondary)' : 'text-amber-600 dark:text-amber-500'">
+                {{ status.text }}
+              </span>
+            </div>
+          </div>
         </div>
-        
-        <div>
-          <h3 class="text-sm font-semibold text-gray-900 dark:text-white tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-            {{ t('quickMetrics.backupStatus.title') }}
-          </h3>
-          <div class="flex items-center gap-2 mt-1">
-             <div class="w-1.5 h-1.5 rounded-full"
-                  :class="loading ? 'bg-gray-400 animate-pulse' : isConfigured ? 'bg-green-500' : 'bg-amber-500 animate-pulse'">
-             </div>
-             <span class="text-[11px] font-medium uppercase tracking-wider"
-                   :class="isConfigured ? 'text-gray-500 dark:text-zinc-400' : 'text-amber-600 dark:text-amber-500'">
-               {{ status.text }}
-             </span>
+        <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gray-50 dark:bg-zinc-900 text-gray-400 group-hover:text-blue-500 transition-colors">
+          <Settings class="h-3.5 w-3.5" />
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="mt-4 flex-1 flex flex-col">
+        <!-- Loading -->
+        <div v-if="loading" class="space-y-2">
+          <div class="h-2.5 w-3/4 rounded bg-gray-100 dark:bg-zinc-800 animate-pulse"></div>
+          <div class="h-2.5 w-1/2 rounded bg-gray-100 dark:bg-zinc-800 animate-pulse"></div>
+        </div>
+
+        <!-- Configured -->
+        <div v-else-if="isConfigured && config" class="space-y-1.5">
+          <div class="flex items-center gap-2 rounded-xl bg-gray-50 dark:bg-zinc-900/70 px-3 py-2.5">
+            <HardDrive class="h-3.5 w-3.5 shrink-0 text-blue-500" />
+            <div class="min-w-0 flex-1">
+              <p class="text-[9px] font-bold uppercase tracking-[0.15em] text-(--text-secondary) leading-none">Provider</p>
+              <p class="mt-0.5 truncate text-xs font-semibold text-(--text-primary)">{{ config.provider }}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 rounded-xl bg-gray-50 dark:bg-zinc-900/70 px-3 py-2.5">
+            <Cloud class="h-3.5 w-3.5 shrink-0 text-blue-500" />
+            <div class="min-w-0 flex-1">
+              <p class="text-[9px] font-bold uppercase tracking-[0.15em] text-(--text-secondary) leading-none">Bucket</p>
+              <p class="mt-0.5 truncate text-xs font-mono text-(--text-primary)">{{ config.bucket }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Not configured -->
+        <div v-else class="space-y-3">
+          <p class="text-sm text-(--text-secondary) leading-relaxed">
+            {{ t('quickMetrics.backupStatus.description') }}
+          </p>
+          <div class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+            <span class="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+            {{ t('quickMetrics.backupStatus.recommended') }}
           </div>
         </div>
       </div>
-      
-      <div class="w-8 h-8 flex items-center justify-center rounded-md bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-400 group-hover:text-blue-500 group-hover:border-gray-300 dark:group-hover:border-zinc-700 transition-colors">
-         <Settings class="w-4 h-4" />
-      </div>
-    </div>
 
-    <!-- Content -->
-    <div class="relative z-10 flex-1 flex flex-col justify-end">
-      <!-- Loading Skeleton -->
-      <div v-if="loading" class="space-y-3 pt-4 border-t border-gray-100 dark:border-zinc-800/80">
-        <div class="flex items-center justify-between">
-          <div class="h-3 w-16 bg-gray-100 dark:bg-zinc-800 rounded animate-pulse"></div>
-          <div class="h-3 w-24 bg-gray-100 dark:bg-zinc-800 rounded animate-pulse"></div>
-        </div>
-        <div class="flex items-center justify-between">
-          <div class="h-3 w-16 bg-gray-100 dark:bg-zinc-800 rounded animate-pulse"></div>
-          <div class="h-3 w-32 bg-gray-100 dark:bg-zinc-800 rounded animate-pulse"></div>
-        </div>
-      </div>
-
-      <!-- Configured State -->
-      <div v-else-if="configured && config" class="space-y-3 pt-4 border-t border-gray-100 dark:border-zinc-800/80">
-        <div class="flex items-center justify-between">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">Provider</span>
-          <span class="text-xs font-semibold text-gray-900 dark:text-white">{{ config.provider }}</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">Bucket</span>
-          <span class="text-xs font-mono text-gray-700 dark:text-gray-300 truncate max-w-[150px]">{{ config.bucket }}</span>
-        </div>
-      </div>
-
-      <!-- Not Configured State -->
-      <div v-else class="pt-4 border-t border-gray-100 dark:border-zinc-800/80">
-        <p class="text-sm font-medium text-gray-500 dark:text-zinc-400 leading-relaxed mb-4">
-          {{ t('quickMetrics.backupStatus.description') }}
-        </p>
-        <div class="flex items-center gap-1.5 text-amber-600 dark:text-amber-500 transition-colors duration-300">
-          <Zap class="w-3.5 h-3.5" />
-          <span class="text-[11px] font-bold uppercase tracking-wider">
-            {{ t('quickMetrics.backupStatus.recommended') }}
-          </span>
-        </div>
-      </div>
-
-      <div class="mt-4 pt-4 border-t border-gray-100 dark:border-zinc-800/80 flex items-center justify-between overflow-hidden">
-        <div class="flex items-center gap-1.5 text-gray-400 dark:text-zinc-500 group-hover:text-gray-600 dark:group-hover:text-zinc-300 transition-colors duration-300">
-          <span class="text-[10px] font-semibold uppercase tracking-[0.15em]">{{ t('quickMetrics.backupStatus.configuration') }}</span>
-        </div>
-        
-        <div class="flex items-center gap-1 font-semibold text-xs transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 cubic-bezier(0.4, 0, 0.2, 1)"
-             :class="isConfigured ? 'text-blue-600 dark:text-blue-400' : 'text-amber-600 dark:text-amber-500'">
-          <span>{{ t('quickMetrics.backupStatus.manage') }}</span>
-          <ArrowRight :size="14" class="group-hover:translate-x-1 transition-transform duration-300" />
-        </div>
+      <!-- Footer CTA -->
+      <div class="mt-auto pt-4 flex items-center justify-between text-[11px] text-(--text-secondary)">
+        <span class="font-medium">{{ t('quickMetrics.backupStatus.configuration') }}</span>
+        <span class="flex items-center gap-1 font-semibold opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
+              :class="isConfigured ? 'text-blue-600 dark:text-blue-400' : 'text-amber-600 dark:text-amber-500'">
+          {{ t('quickMetrics.backupStatus.manage') }}
+          <ArrowRight class="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform duration-300" />
+        </span>
       </div>
     </div>
   </div>
