@@ -201,11 +201,6 @@ function buildCatalogPage(env, apps, generatedAt) {
   fs.writeFileSync(path.join(catalogDir, 'index.html'), html, 'utf8');
 }
 
-function buildRobotsTxt() {
-  const robots = `User-agent: *\nAllow: /\n`;
-  fs.writeFileSync(path.join(websiteDir, 'robots.txt'), robots, 'utf8');
-}
-
 function buildPages() {
   buildAppsJson();
 
@@ -246,8 +241,6 @@ function buildPages() {
 
     fs.writeFileSync(path.join(appDir, 'index.html'), html, 'utf8');
   }
-
-  buildRobotsTxt();
 
   console.log(`✨ Generated ${apps.length} app pages in ${appsOutputDir}`);
 }
