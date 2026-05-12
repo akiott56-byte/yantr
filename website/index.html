@@ -723,6 +723,7 @@
               class="feature-scroll-track flex items-stretch gap-4 pr-4"
               style="animation-direction: reverse; animation-duration: 55s"
             ></div>
+            <div id="hero-fc-track-3" class="feature-scroll-track flex items-stretch gap-4 pr-4" style="animation-duration: 62s"></div>
           </div>
         </div>
       </section>
@@ -913,145 +914,6 @@
               <span class="flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-gray-300"></span>Synology NAS</span>
               <span class="flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-gray-300"></span>Proxmox / LXC</span>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Remote Access Section -->
-      <section id="remote-access" class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-t border-gray-100 bg-white py-20 sm:py-28">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6">
-          <div class="max-w-3xl mb-14">
-            <p class="text-[11px] uppercase tracking-[0.22em] text-gray-500 mb-3">Remote Access</p>
-            <h2 class="text-3xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900 leading-[1.1]">
-              Reachable from anywhere.<br />
-              <span class="text-gray-400">Fragile from nowhere.</span>
-            </h2>
-            <p class="mt-5 text-base sm:text-lg text-gray-600 leading-relaxed">
-              The hard part of self-hosting isn't running the app — it's reaching it safely. Yantr ships the three pieces most homelabs stitch together by hand: a private mesh, a public tunnel, and one auth edge in front of everything.
-            </p>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-gray-200 rounded-2xl overflow-hidden smooth-shadow">
-            <!-- Tailscale -->
-            <article class="group bg-white p-7 sm:p-8 transition-colors duration-300 hover:bg-gray-50">
-              <div class="flex items-center justify-between mb-6">
-                <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gray-900 text-white transition-transform duration-300 group-hover:scale-110">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="2.2"/><circle cx="12" cy="6" r="2.2"/><circle cx="18" cy="6" r="2.2"/><circle cx="6" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><circle cx="18" cy="12" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="12" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/></svg>
-                </span>
-                <span class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">01 · Private</span>
-              </div>
-              <h3 class="text-xl font-bold font-sans text-gray-900">Tailscale mesh</h3>
-              <p class="mt-2 text-sm text-gray-600 leading-relaxed">
-                A private encrypted network between your devices and your server. Apps stay invisible to the public internet but feel local on your laptop and phone.
-              </p>
-              <p class="mt-6 text-[11px] uppercase tracking-[0.18em] text-gray-400 font-semibold">Replaces</p>
-              <p class="mt-1 text-sm text-gray-700">VPN servers · port forwarding · dynamic DNS</p>
-            </article>
-
-            <!-- Cloudflare Tunnel -->
-            <article class="group bg-white p-7 sm:p-8 transition-colors duration-300 hover:bg-gray-50">
-              <div class="flex items-center justify-between mb-6">
-                <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gray-900 text-white transition-transform duration-300 group-hover:scale-110">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19a4.5 4.5 0 1 0-1.4-8.78 6 6 0 0 0-11.6 2.28A4 4 0 0 0 5 19h12.5z"/></svg>
-                </span>
-                <span class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">02 · Public</span>
-              </div>
-              <h3 class="text-xl font-bold font-sans text-gray-900">Cloudflare Tunnel</h3>
-              <p class="mt-2 text-sm text-gray-600 leading-relaxed">
-                Outbound-only tunnel that publishes a single service to the open internet — with TLS, DDoS protection, and CGNAT support — without opening one router port.
-              </p>
-              <p class="mt-6 text-[11px] uppercase tracking-[0.18em] text-gray-400 font-semibold">Replaces</p>
-              <p class="mt-1 text-sm text-gray-700">Reverse proxy babysitting · cert renewals · a rented VPS</p>
-            </article>
-
-            <!-- Caddy Auth -->
-            <article class="group bg-white p-7 sm:p-8 transition-colors duration-300 hover:bg-gray-50">
-              <div class="flex items-center justify-between mb-6">
-                <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gray-900 text-white transition-transform duration-300 group-hover:scale-110">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-                </span>
-                <span class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold">03 · Protected</span>
-              </div>
-              <h3 class="text-xl font-bold font-sans text-gray-900">Caddy auth edge</h3>
-              <p class="mt-2 text-sm text-gray-600 leading-relaxed">
-                One login wall and HTTPS layer in front of every app — including the ones that were never designed to face the open internet.
-              </p>
-              <p class="mt-6 text-[11px] uppercase tracking-[0.18em] text-gray-400 font-semibold">Replaces</p>
-              <p class="mt-1 text-sm text-gray-700">Per-app auth glue · weak built-in logins · scattered SSL setup</p>
-            </article>
-          </div>
-
-          <!-- Outcome row -->
-          <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-6">
-            <div>
-              <p class="text-4xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900">0</p>
-              <p class="mt-2 text-sm text-gray-600 leading-relaxed">router ports opened for private access</p>
-            </div>
-            <div>
-              <p class="text-4xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900">1</p>
-              <p class="mt-2 text-sm text-gray-600 leading-relaxed">place to enforce auth and TLS for every app</p>
-            </div>
-            <div>
-              <p class="text-4xl sm:text-5xl font-bold font-sans tracking-tight text-gray-900">3</p>
-              <p class="mt-2 text-sm text-gray-600 leading-relaxed">tools, installed and wired together by Yantr</p>
-            </div>
-          </div>
-
-          <div class="mt-12 flex flex-wrap items-center gap-3">
-            <a href="#apps" class="inline-flex items-center gap-2 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-black transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              Browse apps
-            </a>
-            <a href="#faq" class="inline-flex items-center gap-2 rounded-full border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 hover:border-gray-900 hover:text-gray-900 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-              How it fits together
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- Unlimited Linux Boxes Section -->
-      <section id="linux-boxes" class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-t border-gray-100 bg-white py-16 sm:py-20">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6">
-          <div class="text-center mb-10">
-            <p class="text-[11px] uppercase tracking-[0.2em] text-gray-500 mb-2">Unlimited Linux Boxes</p>
-            <h2 class="text-3xl sm:text-4xl font-bold font-sans tracking-tight text-gray-900 mb-2">Fresh Debian or Alpine shells, on demand.</h2>
-            <p class="text-gray-500 max-w-2xl mx-auto text-base leading-relaxed">Deploy a clean SSH-ready Linux environment for tests, debugging, or short-lived tasks — created in one click and disposable by design.</p>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <article class="hero-pillar group flex flex-col items-start rounded-2xl border border-gray-100 bg-white px-5 py-5 hover:shadow-lg transition-all duration-200">
-              <span class="text-2xl mb-3">🐧</span>
-              <h3 class="text-sm font-bold uppercase tracking-[0.14em] text-gray-900">One‑click deploy</h3>
-              <p class="text-sm text-gray-500 mt-2">Choose Debian or Alpine and start an SSH session instantly.</p>
-            </article>
-
-            <article class="hero-pillar group flex flex-col items-start rounded-2xl border border-gray-100 bg-white px-5 py-5 hover:shadow-lg transition-all duration-200">
-              <span class="text-2xl mb-3">🔐</span>
-              <h3 class="text-sm font-bold uppercase tracking-[0.14em] text-gray-900">SSH first</h3>
-              <p class="text-sm text-gray-500 mt-2">Mapped SSH port is the primary access method; works locally or via Tailscale.</p>
-            </article>
-
-            <article class="hero-pillar group flex flex-col items-start rounded-2xl border border-gray-100 bg-white px-5 py-5 hover:shadow-lg transition-all duration-200">
-              <span class="text-2xl mb-3">🗑️</span>
-              <h3 class="text-sm font-bold uppercase tracking-[0.14em] text-gray-900">Disposable</h3>
-              <p class="text-sm text-gray-500 mt-2">Tear down when finished — no long‑lived machines to maintain.</p>
-            </article>
-
-            <article class="hero-pillar group flex flex-col items-start rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-5 hover:shadow-lg transition-all duration-200">
-              <span class="text-2xl mb-3">⚙️</span>
-              <h3 class="text-sm font-bold uppercase tracking-[0.14em] text-emerald-700">Extendable</h3>
-              <p class="text-sm text-emerald-700 mt-2">Publish extra services later with standard Docker port mappings.</p>
-            </article>
-          </div>
-
-          <div class="mt-8 max-w-3xl mx-auto text-center">
-            <div class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 font-mono text-sm text-gray-900 inline-block">ssh yantr@localhost -p <span class="font-bold">XXXX</span></div>
-            <p class="mt-3 text-sm text-gray-500">Replace <span class="font-mono text-gray-900">XXXX</span> with the mapped SSH port. Works locally, over Tailscale, or using Yantr's remote‑access stack.</p>
-          </div>
-
-          <div class="mt-8 text-center">
-            <a href="#apps" class="inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold hover:bg-gray-100 transition">Try it — Deploy a box</a>
           </div>
         </div>
       </section>
@@ -1790,10 +1652,36 @@
             title: "Proxy Authentication",
             desc: "Add bcrypt-secured HTTP basic auth to any app in one click — Caddy wraps it with a login wall, no code changes needed.",
           },
+          {
+            emoji: "🔒",
+            title: "Tailscale Mesh",
+            desc: "Private encrypted network between your devices and server. Apps stay invisible to the internet but feel local everywhere.",
+          },
+          {
+            emoji: "☁️",
+            title: "Cloudflare Tunnel",
+            desc: "Outbound-only tunnel that publishes apps to the internet with TLS and DDoS protection — no open ports needed.",
+          },
+          {
+            emoji: "🛡️",
+            title: "Caddy Auth Edge",
+            desc: "One login wall and HTTPS layer in front of every app, including ones never designed to face the open internet.",
+          },
+          {
+            emoji: "🐧",
+            title: "Linux Boxes On Demand",
+            desc: "Spin up a fresh Debian or Alpine shell in one click. SSH-ready, isolated, and disposable when you're done.",
+          },
+          {
+            emoji: "🗂️",
+            title: "Disposable Environments",
+            desc: "Create ephemeral Linux containers for tests, debugging, or short-lived tasks — tear them down without a trace.",
+          },
         ];
 
         const track1 = document.getElementById("hero-fc-track-1");
         const track2 = document.getElementById("hero-fc-track-2");
+        const track3 = document.getElementById("hero-fc-track-3");
         if (!track1 || !track2) return;
 
         function buildCard(f) {
@@ -1806,15 +1694,18 @@
         </article>`;
         }
 
-        const half = Math.ceil(features.length / 2);
-        const row1Features = features.slice(0, half);
-        const row2Features = features.slice(half);
+        const third = Math.ceil(features.length / 3);
+        const row1Features = features.slice(0, third);
+        const row2Features = features.slice(third, third * 2);
+        const row3Features = features.slice(third * 2);
 
         const cards1 = row1Features.map(buildCard).join("");
         const cards2 = row2Features.map(buildCard).join("");
+        const cards3 = row3Features.map(buildCard).join("");
 
         track1.innerHTML = cards1 + cards1;
         track2.innerHTML = cards2 + cards2;
+        if (track3) track3.innerHTML = cards3 + cards3;
       })();
     </script>
   </body>
