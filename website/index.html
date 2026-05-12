@@ -570,7 +570,7 @@
       <div class="min-h-screen mb-10 sm:mb-12 flex flex-col justify-center relative z-10 py-16 sm:py-20 overflow-hidden">
         <!-- Hero Background Animation Container -->
         <div id="hero-stars" class="absolute inset-0 overflow-hidden -z-10 pointer-events-none"></div>
-        <div class="max-w-4xl mx-auto flex flex-col items-center text-center bg-white/95 rounded-2xl px-6 py-8">
+        <div class="max-w-4xl mx-auto flex flex-col items-center text-center px-6 py-8">
           <div class="flex flex-col items-center text-center">
             <a
               href="./install-docker.html"
@@ -592,12 +592,42 @@
             <p class="text-xl sm:text-2xl font-semibold text-gray-400 tracking-tight mb-5 font-sans animate-fade-in-up delay-150">
               The self-hosted app store for your hardware.
             </p>
-            <p id="hero-desc" class="text-base text-gray-500 leading-relaxed max-w-2xl mb-5 font-sans animate-fade-in-up delay-200">
+            <p id="hero-desc" class="text-base text-gray-500 leading-relaxed max-w-2xl mb-6 font-sans animate-fade-in-up delay-200">
               Find popular server apps in one place and install them with a single command. Yantr runs alongside your existing OS — no re-imaging and no vendor lock-in.
             </p>
 
+            <!-- Stats strip -->
+            <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mb-7 animate-fade-in-up delay-[300ms]">
+              <span class="flex items-center gap-1.5 text-sm text-gray-500 font-sans">
+                <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                <span id="hero-app-count">129+</span> apps
+              </span>
+              <span class="text-gray-200" aria-hidden="true">|</span>
+              <span class="flex items-center gap-1.5 text-sm text-gray-500 font-sans">
+                <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Open source
+              </span>
+              <span class="text-gray-200" aria-hidden="true">|</span>
+              <span class="flex items-center gap-1.5 text-sm text-gray-500 font-sans">
+                <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                No lock-in
+              </span>
+              <span class="text-gray-200" aria-hidden="true">|</span>
+              <span class="flex items-center gap-1.5 text-sm text-gray-500 font-sans">
+                <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Docker-native
+              </span>
+            </div>
+
             <!-- CTAs -->
             <div class="flex flex-wrap items-center justify-center gap-3 animate-fade-in-up delay-[400ms]">
+              <a
+                href="./catalog/"
+                class="flex items-center gap-2 bg-black text-white px-5 py-2.5 text-sm font-bold hover:bg-gray-800 transition-colors rounded-lg"
+              >
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h10"/></svg>
+                Browse Apps
+              </a>
               <a
                 href="https://github.com/besoeasy/yantr"
                 target="_blank"
@@ -623,97 +653,44 @@
             </div>
           </div>
 
-          <div class="w-full max-w-4xl mt-12 animate-fade-in-up delay-200" id="install">
-            <div class="install-shell relative overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-2xl shadow-gray-200/50 backdrop-blur-sm sm:mx-auto">
-              <!-- Window top bar -->
-              <div class="flex items-center justify-between border-b border-gray-200 bg-gray-50/80 px-4 py-3 sm:px-6">
-                <div class="flex items-center gap-2 text-xs font-mono font-medium text-gray-500">
-                  <span class="flex gap-1.5 mr-2">
-                    <span class="h-3 w-3 rounded-full bg-red-400"></span>
-                    <span class="h-3 w-3 rounded-full bg-amber-400"></span>
-                    <span class="h-3 w-3 rounded-full bg-emerald-400"></span>
-                  </span>
-                  ~
-                </div>
-                <div class="flex items-center gap-2 text-[10px] font-mono font-medium uppercase tracking-wider text-gray-400">
-                  <span class="bg-white border border-gray-200 shadow-sm px-2 py-0.5 rounded-md">Linux</span>
-                  <span class="bg-white border border-gray-200 shadow-sm px-2 py-0.5 rounded-md">macOS</span>
-                  <span class="bg-white border border-gray-200 shadow-sm px-2 py-0.5 rounded-md">WSL2</span>
-                  <span class="bg-white border border-gray-200 shadow-sm px-2 py-0.5 rounded-md">ARM</span>
-                </div>
-              </div>
-
-              <div class="px-5 py-6 sm:px-10 sm:py-10 bg-gradient-to-b from-gray-50/30 to-white">
-                <div class="mb-8 max-w-lg">
-                  <h3 class="text-xl sm:text-2xl font-bold font-sans tracking-tight text-gray-900 mb-2">Install via Docker in 60s</h3>
-                  <p class="text-sm text-gray-600 leading-relaxed font-sans">
-                    The entire Yantr runtime is a single container. It deploys instantly, binds to its own isolated networks, and never litters your host OS.
-                  </p>
-                </div>
-
-                <!-- Command Box -->
-                <div class="relative group mt-4">
-                  <div class="absolute -inset-1 rounded-2xl bg-gradient-to-r from-emerald-100 to-emerald-500/10 opacity-0 blur transition duration-500 group-hover:opacity-100 mix-blend-multiply"></div>
-                  
-                  <div class="relative flex flex-col sm:flex-row overflow-hidden rounded-xl border border-gray-300 bg-gray-900 shadow-lg group-hover:border-gray-400 transition-colors">
-                    <label class="flex items-center gap-2 border-b border-gray-800 bg-black/40 px-4 py-3 sm:border-b-0 sm:border-r sm:px-5 font-mono text-xs font-semibold text-gray-400">
-                      <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.5)]"></span>
-                      cli
-                    </label>
-                    <code
-                      id="install-cmd"
-                      class="flex-1 block overflow-x-auto text-left text-[13px] text-gray-100 whitespace-nowrap bg-transparent px-4 py-4 sm:px-6 font-mono leading-relaxed"
-                    ><span class="text-pink-400">docker</span> run -d --name yantr --network host <span class="text-sky-300">\\</span><br/>  -v /var/run/docker.sock:/var/run/docker.sock <span class="text-sky-300">\\</span><br/>  -v /var/lib/docker/volumes:/var/lib/docker/volumes <span class="text-sky-300">\\</span><br/>  --restart unless-stopped ghcr.io/besoeasy/yantr</code>
-
-                    <button
-                      id="copy-install"
-                      onclick="
-                        navigator.clipboard.writeText('docker run -d --name yantr --network host -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes --restart unless-stopped ghcr.io/besoeasy/yantr').then(() => {
-                          const b = document.getElementById('copy-install');
-                          b.classList.add('copied');
-                          setTimeout(() => b.classList.remove('copied'), 2000);
-                        })
-                      "
-                      class="flex items-center justify-center gap-2 bg-emerald-500 px-6 py-4 font-sans text-sm font-bold text-emerald-950 transition-all hover:bg-emerald-400 sm:rounded-r-xl"
-                      title="Copy command"
-                    >
-                      <svg class="copy-icon h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                      </svg>
-                      <svg class="check-icon hidden h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
-                      </svg>
-                      <span class="copy-label">Copy</span>
-                      <span class="copied-label">Copied!</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-t border-gray-100 pt-6">
-                  <div class="flex items-center gap-3">
-                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-100 border border-gray-200">
-                      <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p class="text-sm font-semibold font-sans text-gray-900">Then jump into localhost</p>
-                      <p class="text-xs text-gray-500 mt-0.5">Yantr starts immediately at <code class="bg-gray-100 text-gray-600 px-1 py-0.5 rounded ml-0.5">localhost:5252</code></p>
-                    </div>
-                  </div>
-
-                  <a href="./install-docker.html" class="group flex items-center justify-between sm:w-auto gap-3 rounded-xl border border-gray-200 bg-white px-4 py-2 hover:border-gray-400 hover:bg-gray-50 transition-all font-sans text-sm">
-                    <span class="text-gray-600 font-medium group-hover:text-gray-900">Don't have Docker?</span>
-                    <span class="flex items-center gap-1 text-emerald-600 font-semibold group-hover:text-emerald-500">
-                      Guide
-                      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
-                    </span>
-                  </a>
-                </div>
-              </div>
+          <div class="w-full max-w-2xl mt-10 animate-fade-in-up delay-200" id="install">
+            <!-- Command Box -->
+            <div class="flex flex-col sm:flex-row overflow-hidden rounded-xl border border-gray-300 bg-gray-900 shadow-lg hover:border-gray-500 transition-colors">
+              <label class="flex items-center gap-2 border-b border-gray-800 bg-black/40 px-4 py-3 sm:border-b-0 sm:border-r sm:px-5 font-mono text-xs font-semibold text-gray-400 shrink-0">
+                <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                docker
+              </label>
+              <code
+                id="install-cmd"
+                class="flex-1 block overflow-x-auto text-left text-[13px] text-gray-100 whitespace-nowrap bg-transparent px-4 py-3.5 sm:px-5 font-mono leading-relaxed hide-scrollbar"
+              ><span class="text-pink-400">run</span> -d --name yantr --network host -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes --restart unless-stopped ghcr.io/besoeasy/yantr</code>
+              <button
+                id="copy-install"
+                onclick="
+                  navigator.clipboard.writeText('docker run -d --name yantr --network host -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes --restart unless-stopped ghcr.io/besoeasy/yantr').then(() => {
+                    const b = document.getElementById('copy-install');
+                    b.classList.add('copied');
+                    setTimeout(() => b.classList.remove('copied'), 2000);
+                  })
+                "
+                class="flex items-center justify-center gap-2 bg-emerald-500 px-5 py-3.5 font-sans text-sm font-bold text-emerald-950 transition-colors hover:bg-emerald-400 shrink-0"
+                title="Copy command"
+              >
+                <svg class="copy-icon h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                <svg class="check-icon hidden h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span class="copy-label">Copy</span>
+                <span class="copied-label">Copied!</span>
+              </button>
             </div>
+            <!-- Footer hint -->
+            <p class="mt-3 text-xs text-gray-400 font-sans text-center">
+              Opens at <code class="text-gray-500">localhost:5252</code> &nbsp;·&nbsp;
+              <a href="./install-docker.html" class="text-emerald-600 hover:text-emerald-500 transition-colors">No Docker yet? Guide →</a>
+            </p>
           </div>
         </div>
       </div>
@@ -1176,6 +1153,9 @@
           const data = await response.json();
           const apps = data.apps;
           if (!apps || apps.length === 0) return;
+
+          const appCountEl = document.getElementById("hero-app-count");
+          if (appCountEl) appCountEl.textContent = apps.length + "+";
 
           const rowOne = document.getElementById("hero-app-marquee-1");
           const rowTwo = document.getElementById("hero-app-marquee-2");
