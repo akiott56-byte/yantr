@@ -2,7 +2,6 @@
   "name": "yantr",
   "type": "module",
   "scripts": {
-    "check": "node check.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",

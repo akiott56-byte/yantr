@@ -234,10 +234,11 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <div v-else class="relative z-10 flex h-full flex-col p-5 sm:p-6">
-      <div class="flex items-start justify-between gap-4">
+    <div v-else class="relative z-10 flex h-full flex-col p-5">
+      <!-- Compact header -->
+      <div class="flex items-center justify-between gap-3">
         <div class="min-w-0">
-          <div class="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-(--text-secondary)">
+          <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-(--text-secondary)">
             <span>{{ t("quickMetrics.hostMetrics.hostSystem") }}</span>
             <span class="opacity-35">/</span>
             <span class="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
@@ -245,84 +246,40 @@ onUnmounted(() => {
               {{ t("quickMetrics.hostMetrics.online") }}
             </span>
           </div>
-
-          <h3 class="mt-3 truncate text-[1.45rem] font-semibold tracking-tight text-(--text-primary)">
-            {{ osInfo.name }}
-          </h3>
-          <p class="mt-2 max-w-xl text-sm leading-relaxed text-(--text-secondary)">
-            {{ greeting }}. {{ t("home.overviewPulseCard.stackRunningSmoothly") }}
-          </p>
+          <h3 class="mt-1.5 truncate text-base font-semibold tracking-tight text-(--text-primary)">{{ osInfo.name }}</h3>
         </div>
-
-        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-[1.1rem] bg-gray-50 dark:bg-zinc-900 text-blue-500 transition-all duration-500 group-hover:scale-105 group-hover:-rotate-6">
-          <Server class="h-5 w-5" />
+        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gray-50 dark:bg-zinc-900 text-blue-500 transition-all duration-500 group-hover:scale-105 group-hover:-rotate-6">
+          <Server class="h-4 w-4" />
         </div>
       </div>
 
-      <div class="mt-4 flex flex-wrap gap-2">
-        <div class="inline-flex min-h-9 items-center gap-2 rounded-full bg-gray-50 dark:bg-zinc-900/70 px-3 py-2 text-[11px] font-medium text-(--text-secondary)">
-          <Server class="h-3.5 w-3.5 text-blue-500" />
-          <span>{{ osInfo.type }}</span>
-        </div>
-        <div class="inline-flex min-h-9 items-center gap-2 rounded-full bg-gray-50 dark:bg-zinc-900/70 px-3 py-2 text-[11px] font-medium text-(--text-secondary)">
-          <Cpu class="h-3.5 w-3.5 text-violet-500" />
-          <span>{{ osInfo.arch }}</span>
-        </div>
-        <div class="inline-flex min-h-9 items-center gap-2 rounded-full bg-gray-50 dark:bg-zinc-900/70 px-3 py-2 text-[11px] font-medium text-(--text-secondary)">
-          <Activity class="h-3.5 w-3.5 text-emerald-500" />
-          <span class="font-mono tracking-tight">{{ osInfo.kernel }}</span>
-        </div>
+      <!-- OS tags - tighter -->
+      <div class="mt-3 flex flex-wrap gap-1.5">
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-gray-50 dark:bg-zinc-900/70 px-2.5 py-1 text-[10px] font-medium text-(--text-secondary)">
+          <Server class="h-3 w-3 text-blue-500 shrink-0" />{{ osInfo.type }}
+        </span>
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-gray-50 dark:bg-zinc-900/70 px-2.5 py-1 text-[10px] font-medium text-(--text-secondary)">
+          <Cpu class="h-3 w-3 text-violet-500 shrink-0" />{{ osInfo.arch }}
+        </span>
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-gray-50 dark:bg-zinc-900/70 px-2.5 py-1 text-[10px] font-mono text-(--text-secondary)">
+          <Activity class="h-3 w-3 text-emerald-500 shrink-0" />{{ osInfo.kernel }}
+        </span>
       </div>
 
-      <div class="mt-5 grid grid-cols-2 gap-2 sm:gap-3">
+      <!-- Compact 2-col stats grid — all metrics in one place -->
+      <div class="mt-4 grid grid-cols-2 gap-1.5">
         <div
-          v-for="stat in overviewStats"
+          v-for="(stat, i) in [...overviewStats, ...hostStats]"
           :key="stat.key"
-          class="group/tile rounded-[1.15rem] bg-gray-50 dark:bg-zinc-900/70 px-3 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:smooth-shadow"
+          :class="['flex items-center gap-2 rounded-xl bg-gray-50 dark:bg-zinc-900/70 px-3 py-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:smooth-shadow', i === overviewStats.length + hostStats.length - 1 && (overviewStats.length + hostStats.length) % 2 !== 0 ? 'col-span-2' : '']"
         >
-          <div class="flex items-start justify-between gap-3">
-            <div class="min-w-0">
-              <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-(--text-secondary)">{{ stat.label }}</p>
-              <p class="mt-2 truncate text-xl font-semibold tracking-tight text-(--text-primary)">{{ stat.value }}</p>
-            </div>
-            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-white dark:bg-[#0A0A0A] transition-transform duration-300 group-hover/tile:scale-105 group-hover/tile:-rotate-6">
-              <component :is="stat.icon" :class="['h-4 w-4 transition-transform duration-300 group-hover/tile:scale-110', stat.tone]" />
-            </div>
+          <component :is="stat.icon" :class="['h-3.5 w-3.5 shrink-0', stat.tone]" />
+          <div class="min-w-0 flex-1">
+            <p class="text-[9px] font-bold uppercase tracking-[0.15em] text-(--text-secondary) leading-none">{{ stat.label }}</p>
+            <p class="mt-0.5 truncate text-xs font-semibold tracking-tight text-(--text-primary)">
+              {{ stat.value }}<span v-if="stat.suffix" class="ml-1 text-[10px] font-normal text-(--text-secondary)">{{ stat.suffix }}</span>
+            </p>
           </div>
-        </div>
-      </div>
-
-      <div class="mt-5 space-y-2">
-        <div
-          v-for="stat in hostStats"
-          :key="stat.key"
-          class="group/metric flex items-center justify-between gap-3 rounded-[1.15rem] bg-gray-50 dark:bg-zinc-900/70 px-3.5 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:smooth-shadow"
-        >
-          <div class="flex min-w-0 items-center gap-3">
-            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white dark:bg-[#0A0A0A] transition-transform duration-300 group-hover/metric:scale-105 group-hover/metric:-rotate-6">
-              <component :is="stat.icon" :class="['h-4.5 w-4.5 transition-transform duration-300 group-hover/metric:scale-110', stat.tone]" />
-            </div>
-
-            <div class="min-w-0">
-              <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-(--text-secondary)">{{ stat.label }}</p>
-              <p class="mt-1 truncate text-sm font-semibold tracking-tight text-(--text-primary)">{{ stat.value }}</p>
-            </div>
-          </div>
-
-          <div class="shrink-0 text-right">
-            <p v-if="stat.suffix" class="text-sm font-semibold tracking-tight text-(--text-primary)">{{ stat.suffix }}</p>
-            <p v-else class="text-sm font-semibold tracking-tight text-(--text-primary)">--</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-auto pt-5 text-[11px] text-(--text-secondary)">
-        <div class="flex items-center justify-between gap-3 rounded-[1.15rem] bg-gray-50 dark:bg-zinc-900/70 px-3.5 py-3">
-          <span class="inline-flex items-center gap-2 font-medium">
-            <Activity class="h-3.5 w-3.5 text-emerald-500" />
-            {{ t("home.overviewPulseCard.active") }} · {{ t("home.overviewPulseCard.healthy") }}
-          </span>
-          <span class="truncate font-mono text-[10px] tracking-tight">{{ t("home.overviewPulseCard.systemOnline") }}</span>
         </div>
       </div>
     </div>
