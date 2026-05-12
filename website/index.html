@@ -564,13 +564,12 @@
       }
     </style>
   </head>
-  <body class="bg-white text-black font-mono antialiased selection:bg-black selection:text-white relative overflow-x-hidden">
-    <!-- Full-page Background Animation Container -->
-    <div id="hero-stars" class="absolute top-0 left-0 w-full overflow-hidden -z-10 pointer-events-none" style="height: 100%"></div>
-
+  <body class="bg-white text-black font-mono antialiased selection:bg-black selection:text-white overflow-x-hidden">
     <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-24 relative">
       <!-- Hero -->
-      <div class="min-h-screen mb-10 sm:mb-12 flex flex-col justify-center relative z-10 py-16 sm:py-20">
+      <div class="min-h-screen mb-10 sm:mb-12 flex flex-col justify-center relative z-10 py-16 sm:py-20 overflow-hidden">
+        <!-- Hero Background Animation Container -->
+        <div id="hero-stars" class="absolute inset-0 overflow-hidden -z-10 pointer-events-none"></div>
         <div class="max-w-4xl mx-auto flex flex-col items-center text-center bg-white/95 rounded-2xl px-6 py-8">
           <div class="flex flex-col items-center text-center">
             <a
@@ -1347,8 +1346,8 @@
           const selectedApps = getRandomUniqueItems(appsWithLogo, starCount);
 
           // Match container height to full document height
-          const docHeight = document.documentElement.scrollHeight;
-          container.style.height = docHeight + "px";
+          const heroSection = container.closest('.min-h-screen') || container.parentElement;
+          const heroHeight = heroSection ? heroSection.offsetHeight : window.innerHeight;
 
           for (const app of selectedApps) {
             const logoUrl = app.logo ? getLogoUrl(app) : null;
@@ -1357,9 +1356,9 @@
             const el = document.createElement("div");
             el.className = "star-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/40 shadow-sm border border-white/20";
 
-            // Spread icons across full document width and height
+            // Spread icons across hero section width and height only
             el.style.left = Math.floor(Math.random() * 88) + 2 + "%";
-            el.style.top = Math.floor(Math.random() * docHeight) + "px";
+            el.style.top = Math.floor(Math.random() * heroHeight) + "px";
 
             const size = Math.floor(Math.random() * 8) + 16; // 16px - 24px icon size
 
