@@ -776,11 +776,6 @@
         <div class="overflow-hidden py-2 w-full">
           <div class="flex items-center gap-3 app-marquee-track app-marquee-right" id="hero-app-marquee-2"></div>
         </div>
-        <!-- Row 3: left slower -->
-        <div class="overflow-hidden py-2 w-full">
-          <div class="flex items-center gap-3 app-marquee-track app-marquee-left" style="animation-duration: 55s" id="hero-app-marquee-3"></div>
-        </div>
-
         <!-- CTA -->
         <div class="relative z-20 mt-12">
           <a
@@ -1016,7 +1011,7 @@
         const logoUrl = getLogoUrl(app);
         return `
           <a href="./apps/${app.id}/" class="group relative inline-flex items-start gap-3 border border-gray-100 bg-white rounded-2xl px-4 py-3 sm:px-5 sm:py-4 hover:border-black transition-all duration-500 hover:shadow-xl hover:-translate-y-1 min-w-[240px] max-w-[280px] sm:min-w-[300px] sm:max-w-[360px] lg:min-w-[380px] lg:max-w-[460px]">
-            <img src="${logoUrl}" alt="${app.name}" class="w-12 h-12 rounded-xl object-cover shrink-0 border border-gray-100" />
+            <img src="${logoUrl}" alt="${app.name}" class="w-20 h-20 rounded-2xl object-cover shrink-0 border border-gray-100" />
             <span class="min-w-0 leading-tight">
               <span class="block text-base font-bold font-sans text-gray-900 truncate">${app.name}</span>
               <span class="block text-sm leading-5 font-sans text-gray-500 mt-1 app-description-clamp">${app.short_description || app.description || "No description available."}</span>
@@ -1037,7 +1032,6 @@
 
           const rowOne = document.getElementById("hero-app-marquee-1");
           const rowTwo = document.getElementById("hero-app-marquee-2");
-          const rowThree = document.getElementById("hero-app-marquee-3");
           if (!rowOne || !rowTwo) return;
 
           const shuffled = [...apps];
@@ -1046,9 +1040,9 @@
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
           }
 
-          const rows = [[], [], []];
+          const rows = [[], []];
           shuffled.forEach((app, index) => {
-            rows[index % 3].push(app);
+            rows[index % 2].push(app);
           });
 
           const renderMarqueeRow = (element, list) => {
@@ -1059,7 +1053,6 @@
 
           renderMarqueeRow(rowOne, rows[0]);
           renderMarqueeRow(rowTwo, rows[1]);
-          renderMarqueeRow(rowThree, rows[2]);
         } catch (error) {
           console.error("Failed to load hero app showcase:", error);
         }
