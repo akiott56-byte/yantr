@@ -123,35 +123,51 @@
         background: rgba(255, 255, 255, 1);
         border: 1px solid rgba(0, 0, 0, 0.04);
       }
-      @keyframes twinkle {
-        0%,
-        100% {
-          opacity: 0.1;
-          transform: scale(0.8);
-        }
-        50% {
-          opacity: 0.4;
-          transform: scale(1.1);
-        }
-      }
-      .star-icon {
+      /* ── Circular orbit background ───────────────────────────────── */
+      .orbit-arm {
         position: absolute;
-        animation: twinkle 4s infinite ease-in-out;
-        opacity: 0.1;
-        filter: grayscale(100%);
-        transition: all 0.3s;
-        pointer-events: auto; /* Enable hover */
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        transform-origin: 0 0;
       }
-      .star-icon:hover {
-        opacity: 1 !important;
+      @keyframes orbitCW {
+        0%   { transform: rotate(0turn)  translateX(var(--orbit-r)) rotate(0turn); }
+        100% { transform: rotate(1turn)  translateX(var(--orbit-r)) rotate(-1turn); }
+      }
+      @keyframes orbitCCW {
+        0%   { transform: rotate(0turn)  translateX(var(--orbit-r)) rotate(0turn); }
+        100% { transform: rotate(-1turn) translateX(var(--orbit-r)) rotate(1turn); }
+      }
+      @keyframes orbitPulse {
+        0%, 100% { opacity: 0.1; }
+        50%       { opacity: 0.32; }
+      }
+      .orbit-chip {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 9px 4px 5px;
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.75);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        white-space: nowrap;
+        pointer-events: auto;
+        cursor: default;
+        filter: grayscale(100%);
+        transition: filter 0.25s ease, opacity 0.25s ease;
+        animation: orbitPulse var(--fade-dur, 4s) ease-in-out infinite var(--fade-delay, 0s);
+      }
+      .orbit-chip:hover {
         filter: grayscale(0%);
-        transform: scale(1.1) !important; /* Temporarily pause animation or override transform */
-        z-index: 20;
+        opacity: 1 !important;
         animation-play-state: paused;
-        background: rgba(255, 255, 255, 0.9);
-        box-shadow:
-          0 4px 6px -1px rgb(0 0 0 / 0.1),
-          0 2px 4px -2px rgb(0 0 0 / 0.1);
+        z-index: 20;
       }
       @keyframes fadeInUp {
         from {
@@ -569,7 +585,7 @@
       <!-- Hero -->
       <div class="min-h-screen mb-10 sm:mb-12 flex flex-col justify-center relative z-10 py-16 sm:py-20">
         <!-- Hero Background Animation Container -->
-        <div id="hero-stars" class="absolute -z-10 pointer-events-none" style="top:0;height:100%;left:50%;transform:translateX(-50%);width:100vw;"></div>
+        <div id="hero-stars" class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"></div>
         <div class="max-w-4xl mx-auto flex flex-col items-center text-center bg-white px-6 py-8 rounded-2xl">
           <div class="flex flex-col items-center text-center">
             <a
@@ -1183,35 +1199,53 @@
           const apps = data.apps;
           if (!apps || !apps.length) return;
 
-          const starCount = 60;
           const appsWithLogo = apps.filter((app) => app.logo);
-          const selectedApps = getRandomUniqueItems(appsWithLogo, starCount);
 
-          // Match container height to full document height
-          const heroSection = container.closest('.min-h-screen') || container.parentElement;
-          const heroHeight = heroSection ? heroSection.offsetHeight : window.innerHeight;
+          // Scale orbit radii to viewport — smaller on mobile
+          const minDim = Math.min(window.innerWidth, window.innerHeight);
+          const scale = Math.max(0.45, Math.min(1, minDim / 700));
 
-          for (const app of selectedApps) {
-            const logoUrl = app.logo ? getLogoUrl(app) : null;
-            if (!logoUrl) continue;
+          const rings = [
+            { r: Math.round(145 * scale), count: 6,  dur: 38,  dir: "CW"  },
+            { r: Math.round(265 * scale), count: 10, dur: 62,  dir: "CCW" },
+            { r: Math.round(390 * scale), count: 13, dur: 88,  dir: "CW"  },
+            { r: Math.round(520 * scale), count: 13, dur: 115, dir: "CCW" },
+          ];
 
-            const el = document.createElement("div");
-            el.className = "star-icon absolute flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/40 shadow-sm border border-white/20";
+          const totalNeeded = rings.reduce((s, ring) => s + ring.count, 0);
+          const selectedApps = getRandomUniqueItems(appsWithLogo, totalNeeded);
 
-            // Spread icons across hero section width and height only
-            el.style.left = Math.floor(Math.random() * 96) + "%";
-            el.style.top = Math.floor(Math.random() * heroHeight) + "px";
+          // Subtle orbit guide circles
+          for (const ring of rings) {
+            const guide = document.createElement("div");
+            guide.style.cssText = `position:absolute;top:50%;left:50%;width:${ring.r * 2}px;height:${ring.r * 2}px;margin-left:-${ring.r}px;margin-top:-${ring.r}px;border-radius:50%;border:1px dashed rgba(0,0,0,0.035);pointer-events:none;`;
+            container.appendChild(guide);
+          }
 
-            const size = Math.floor(Math.random() * 8) + 16; // 16px - 24px icon size
+          let appIdx = 0;
+          for (const ring of rings) {
+            for (let i = 0; i < ring.count; i++) {
+              const app = selectedApps[appIdx++];
+              if (!app) break;
+              const logoUrl = getLogoUrl(app);
 
-            el.style.animationDelay = Math.random() * 5 + "s";
-            el.style.animationDuration = Math.random() * 3 + 3 + "s";
-            el.innerHTML = `
-              <img src="${logoUrl}" style="width:${size}px; height:${size}px;" class="object-contain shrink-0" alt="${app.name}">
-              <span class="text-xs font-semibold text-gray-700 whitespace-nowrap">${app.name}</span>
-            `;
+              const delay = -((i / ring.count) * ring.dur).toFixed(2);
+              const fadeDur  = (3.5 + Math.random() * 3).toFixed(1);
+              const fadeDelay = (Math.random() * 6).toFixed(1);
 
-            container.appendChild(el);
+              const arm = document.createElement("div");
+              arm.className = "orbit-arm";
+              arm.style.cssText = `--orbit-r:${ring.r}px;animation:orbit${ring.dir} ${ring.dur}s linear infinite ${delay}s;`;
+
+              const chip = document.createElement("div");
+              chip.className = "orbit-chip";
+              chip.style.setProperty("--fade-dur",   fadeDur  + "s");
+              chip.style.setProperty("--fade-delay", fadeDelay + "s");
+              chip.innerHTML = `<img src="${logoUrl}" style="width:17px;height:17px;" class="object-contain shrink-0" alt="${app.name}"><span class="text-xs font-semibold text-gray-600 whitespace-nowrap">${app.name}</span>`;
+
+              arm.appendChild(chip);
+              container.appendChild(arm);
+            }
           }
         } catch (e) {
           console.error("Hero animation failed:", e);
