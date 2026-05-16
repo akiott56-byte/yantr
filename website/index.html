@@ -963,6 +963,41 @@
           </div>
         </div>
       </section>
+
+      <!-- All Apps Section -->
+      <section class="py-20 sm:py-28" id="all-apps">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+          <div class="mb-10">
+            <p class="text-[11px] uppercase tracking-[0.25em] text-gray-400 font-semibold mb-3">App Catalog</p>
+            <div class="flex flex-col sm:flex-row sm:items-end gap-4">
+              <div>
+                <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">All apps</h2>
+                <p class="text-gray-500 mt-2 text-sm">Browse self-hosted apps you can run with Yantr.</p>
+              </div>
+              <div class="sm:ml-auto flex items-center gap-2">
+                <input
+                  id="apps-search"
+                  type="search"
+                  placeholder="Search apps…"
+                  class="w-full sm:w-56 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-gray-400 transition-colors"
+                />
+                <div id="apps-sort" class="flex items-center gap-1">
+                  <select id="apps-sort-select" class="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-gray-400 transition-colors cursor-pointer">
+                    <option value="alpha">Alphabetically</option>
+                    <option value="newest">Newest</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="all-apps-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <!-- Populated by loadAllApps() -->
+          </div>
+
+          <p id="all-apps-empty" class="hidden text-center text-gray-400 text-sm py-16">No apps match your search.</p>
+        </div>
+      </section>
     </main>
 
     <script>
@@ -1225,6 +1260,70 @@
           console.error("Hero animation failed:", e);
         }
       }
+      // ── All Apps Grid ─────────────────────────────────────────────
+      async function loadAllApps() {
+        const grid = document.getElementById("all-apps-grid");
+        const empty = document.getElementById("all-apps-empty");
+        const searchInput = document.getElementById("apps-search");
+        const sortSelect = document.getElementById("apps-sort-select");
+        if (!grid) return;
+
+        let allApps = [];
+        try {
+          const res = await fetch("./apps.json");
+          const data = await res.json();
+          allApps = Array.isArray(data.apps) ? data.apps : [];
+        } catch (e) {
+          console.error("Failed to load apps.json", e);
+          return;
+        }
+
+        function appCard(app) {
+          const logoUrl = getLogoUrl(app);
+          const desc = app.short_description || app.description || "";
+          return `
+            <a href="./apps/${app.id}/" class="group flex items-start gap-3.5 rounded-2xl p-3.5 hover:bg-gray-50 transition-colors duration-150">
+              <img src="${logoUrl}" alt="${app.name}" width="48" height="48"
+                class="w-12 h-12 rounded-xl object-cover shrink-0 border border-gray-100"
+                loading="lazy" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(app.name)}&background=random&color=fff&bold=true'" />
+              <span class="min-w-0">
+                <span class="block text-sm font-semibold text-gray-900 truncate group-hover:text-black">${app.name}</span>
+                <span class="block text-xs text-gray-500 mt-0.5 leading-relaxed line-clamp-2">${desc}</span>
+              </span>
+            </a>
+          `;
+        }
+
+        function render() {
+          const q = (searchInput ? searchInput.value : "").toLowerCase().trim();
+          const sort = sortSelect ? sortSelect.value : "alpha";
+
+          let filtered = q
+            ? allApps.filter(a =>
+                a.name.toLowerCase().includes(q) ||
+                (a.short_description || "").toLowerCase().includes(q) ||
+                (a.tags || []).some(t => t.includes(q))
+              )
+            : [...allApps];
+
+          if (sort === "alpha") {
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
+          }
+
+          if (filtered.length === 0) {
+            grid.innerHTML = "";
+            empty && empty.classList.remove("hidden");
+          } else {
+            empty && empty.classList.add("hidden");
+            grid.innerHTML = filtered.map(appCard).join("");
+          }
+        }
+
+        searchInput && searchInput.addEventListener("input", render);
+        sortSelect && sortSelect.addEventListener("change", render);
+        render();
+      }
+
       document.addEventListener("DOMContentLoaded", () => {
         loadHeroAppShowcase();
         loadStars();
@@ -1232,6 +1331,7 @@
         loadRandomScreenshot();
         initHeroAnimation();
         initArchDiagram();
+        loadAllApps();
       });
 
       // ── Interactive Architecture Diagram ──────────────────────────
