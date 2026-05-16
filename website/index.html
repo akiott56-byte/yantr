@@ -986,12 +986,7 @@
                   placeholder="Search apps…"
                   class="w-full sm:w-56 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-gray-400 transition-colors"
                 />
-                <div id="apps-sort" class="flex items-center gap-1">
-                  <select id="apps-sort-select" class="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-gray-400 transition-colors cursor-pointer">
-                    <option value="alpha">Alphabetically</option>
-                    <option value="newest">Newest</option>
-                  </select>
-                </div>
+
               </div>
             </div>
           </div>
@@ -1276,7 +1271,7 @@
         const empty = document.getElementById("all-apps-empty");
         const tagsBar = document.getElementById("all-apps-tags");
         const searchInput = document.getElementById("apps-search");
-        const sortSelect = document.getElementById("apps-sort-select");
+
         if (!grid) return;
 
         let allApps = [];
@@ -1342,8 +1337,6 @@
 
         function render() {
           const q = (searchInput ? searchInput.value : "").toLowerCase().trim();
-          const sort = sortSelect ? sortSelect.value : "alpha";
-
           let filtered = allApps.filter(a => {
             const matchesTag = activeTag === "all" || (a.tags || []).includes(activeTag);
             const haystack = `${a.name} ${a.short_description || ""} ${(a.tags || []).join(" ")}`.toLowerCase();
@@ -1351,9 +1344,7 @@
             return matchesTag && matchesSearch;
           });
 
-          if (sort === "alpha") {
-            filtered.sort((a, b) => a.name.localeCompare(b.name));
-          }
+          filtered.sort((a, b) => a.name.localeCompare(b.name));
 
           if (filtered.length === 0) {
             grid.innerHTML = "";
@@ -1365,7 +1356,6 @@
         }
 
         searchInput && searchInput.addEventListener("input", render);
-        sortSelect && sortSelect.addEventListener("change", render);
         render();
       }
 
