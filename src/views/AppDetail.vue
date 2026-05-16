@@ -88,11 +88,145 @@ const canDeploy = computed(() => {
   return !deploying.value;
 });
 
+const hasGeneratorRules = computed(() => {
+  const rules = app.value?.envGenerators;
+  return !!rules && Object.keys(rules).length > 0;
+});
+
 const chatGptUrl = computed(() => {
   if (!app.value) return "";
 
   return buildChatGptExplainUrl(app.value.id);
 });
+
+function getGeneratorRule(envVar) {
+  const rules = app.value?.envGenerators;
+  if (!rules || typeof rules !== "object") return null;
+  const rule = rules[envVar];
+  if (!rule || typeof rule !== "object" || Array.isArray(rule)) return null;
+  return rule;
+}
+
+function randomInt(max) {
+  if (!Number.isInteger(max) || max <= 0) return 0;
+  if (window.crypto?.getRandomValues) {
+    const arr = new Uint32Array(1);
+    window.crypto.getRandomValues(arr);
+    return arr[0] % max;
+  }
+  return Math.floor(Math.random() * max);
+}
+
+function randomStringFromCharacters(characters, length) {
+  if (!characters || length <= 0) return "";
+  let result = "";
+  for (let i = 0; i < length; i += 1) {
+    result += characters[randomInt(characters.length)];
+  }
+  return result;
+}
+
+function resolveGeneratorCharacters(rule) {
+  if (typeof rule.characters === "string" && rule.characters.length > 0) {
+    return rule.characters;
+  }
+
+  const charsets = {
+    alnum: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+    hex: "0123456789abcdef",
+    numeric: "0123456789",
+    alpha: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+    base64url: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_",
+    alnum_symbols: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}:,.?",
+  };
+
+  const selected = typeof rule.charset === "string" ? rule.charset : "alnum";
+  return charsets[selected] || charsets.alnum;
+}
+
+function resolveGeneratorLength(rule) {
+  const parsed = Number.parseInt(rule.length, 10);
+  if (!Number.isInteger(parsed)) return 32;
+  return Math.max(8, Math.min(parsed, 256));
+}
+
+function buildGeneratorRegex(rule) {
+  const pattern = typeof rule.regex === "string"
+    ? rule.regex
+    : typeof rule.pattern === "string"
+      ? rule.pattern
+      : null;
+
+  if (!pattern) return null;
+
+  try {
+    return new RegExp(pattern);
+  } catch {
+    return false;
+  }
+}
+
+function generateValueForRule(rule) {
+  const length = resolveGeneratorLength(rule);
+  const characters = resolveGeneratorCharacters(rule);
+  const regex = buildGeneratorRegex(rule);
+
+  if (regex === false) {
+    throw new Error(t('appDetail.invalidGeneratorRule'));
+  }
+
+  const maxAttempts = 32;
+  for (let i = 0; i < maxAttempts; i += 1) {
+    const candidate = randomStringFromCharacters(characters, length);
+    if (!regex || regex.test(candidate)) {
+      return candidate;
+    }
+  }
+
+  throw new Error(t('appDetail.generationFailed'));
+}
+
+function generateEnvValue(envVar) {
+  const rule = getGeneratorRule(envVar);
+  if (!rule) {
+    toast.info(t('appDetail.noGeneratorForVariable'));
+    return;
+  }
+
+  try {
+    const generated = generateValueForRule(rule);
+    envValues.value[envVar] = generated;
+    toast.success(t('appDetail.generatedValue', { envVar }));
+  } catch (error) {
+    toast.error(error.message || t('appDetail.generationFailed'));
+  }
+}
+
+function generateAllSecureValues() {
+  if (!app.value?.environment?.length) return;
+
+  let generatedCount = 0;
+  app.value.environment.forEach((env) => {
+    const existingValue = envValues.value[env.envVar];
+    if (existingValue) return;
+
+    const rule = getGeneratorRule(env.envVar);
+    if (!rule) return;
+
+    try {
+      envValues.value[env.envVar] = generateValueForRule(rule);
+      generatedCount += 1;
+    } catch {
+      // Ignore a single-variable failure and continue generating others.
+    }
+  });
+
+  if (generatedCount > 0) {
+    toast.success(t('appDetail.generatedValuesCount', { count: generatedCount }));
+  } else {
+    toast.info(t('appDetail.noGeneratorForVariable'));
+  }
+}
 
 // Get suggested value from dependency containers with smart matching
 function getSuggestedValue(envVar) {
@@ -666,19 +800,29 @@ onMounted(async () => {
                 <h2 class="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-zinc-500">
                   {{ t('appDetail.configuration') }}
                 </h2>
-                <button
-                  v-if="dependencies.length > 0 && app.environment?.length > 0"
-                  @click="fillFromDependencies"
-                  :disabled="loadingDependencyEnv || missingDependencies.length > 0"
-                  class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <svg v-if="loadingDependencyEnv" class="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <Download v-else :size="12" />
-                  <span>{{ t('appDetail.autofillEnv') }}</span>
-                </button>
+                <div class="flex items-center gap-3">
+                  <button
+                    v-if="hasGeneratorRules && app.environment?.length > 0"
+                    @click="generateAllSecureValues"
+                    class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
+                  >
+                    <RotateCcw :size="12" />
+                    <span>{{ t('appDetail.generateSecure') }}</span>
+                  </button>
+                  <button
+                    v-if="dependencies.length > 0 && app.environment?.length > 0"
+                    @click="fillFromDependencies"
+                    :disabled="loadingDependencyEnv || missingDependencies.length > 0"
+                    class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <svg v-if="loadingDependencyEnv" class="animate-spin h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <Download v-else :size="12" />
+                    <span>{{ t('appDetail.autofillEnv') }}</span>
+                  </button>
+                </div>
               </div>
 
               <div class="space-y-6">
@@ -687,7 +831,17 @@ onMounted(async () => {
                 <div v-for="env in app.environment" :key="env.envVar" class="space-y-1.5">
                   <label class="w-full text-[10px] font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-widest flex items-center justify-between">
                     {{ env.name }}
-                    <span v-if="env.default" class="text-[9px] font-mono text-gray-400 dark:text-zinc-500 border border-gray-200 dark:border-zinc-800 px-1.5 py-0.5 rounded">{{ env.default }}</span>
+                    <div class="flex items-center gap-2">
+                      <button
+                        v-if="getGeneratorRule(env.envVar)"
+                        @click="generateEnvValue(env.envVar)"
+                        type="button"
+                        class="text-[9px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
+                      >
+                        {{ t('appDetail.generate') }}
+                      </button>
+                      <span v-if="env.default" class="text-[9px] font-mono text-gray-400 dark:text-zinc-500 border border-gray-200 dark:border-zinc-800 px-1.5 py-0.5 rounded">{{ env.default }}</span>
+                    </div>
                   </label>
                   <input
                     v-model="envValues[env.envVar]"

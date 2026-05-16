@@ -152,6 +152,20 @@ export async function getAppsCatalogCached({ forceRefresh } = { forceRefresh: fa
           ? logoRaw.includes("://") ? logoRaw : `https://ipfs.io/ipfs/${logoRaw}`
           : "https://ipfs.io/ipfs/QmVdbRUyvZpXCsVJAs7fo1PJPXaPHnWRtSCFx6jFTGaG5i";
 
+        const envGeneratorsRaw =
+          info.env_generators && typeof info.env_generators === "object"
+            ? info.env_generators
+            : info.envGenerators && typeof info.envGenerators === "object"
+              ? info.envGenerators
+              : {};
+
+        const envGenerators = {};
+        for (const [envVar, rule] of Object.entries(envGeneratorsRaw)) {
+          if (!envVar || typeof envVar !== "string") continue;
+          if (!rule || typeof rule !== "object" || Array.isArray(rule)) continue;
+          envGenerators[envVar] = { ...rule };
+        }
+
         apps.push({
           id: entry.name,
           name: info.name,
@@ -167,6 +181,7 @@ export async function getAppsCatalogCached({ forceRefresh } = { forceRefresh: fa
           path: appPath,
           composePath,
           environment: envVars,
+          envGenerators,
           composePorts: portMappings,
         });
       } catch {

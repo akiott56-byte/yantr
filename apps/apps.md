@@ -63,6 +63,26 @@ Required fields:
 - `dependencies` - array of app IDs (can be empty)
 - `notes` - optional array of operational caveats
 - `customapp` - optional boolean, set to `true` for apps custom-built by the Yantr team (e.g. apps with a `Dockerfile` in the folder). Custom apps show a "Built by Yantr" badge in the UI and have the auto-update button disabled since they use a locally-built image that watchtower cannot update.
+- `env_generators` - optional map of env var names to secure generation rules used by the deploy UI
+
+`env_generators` example:
+
+```json
+"env_generators": {
+  "BETTER_AUTH_SECRET": {
+    "length": 48,
+    "charset": "alnum_symbols",
+    "regex": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{32,}$"
+  }
+}
+```
+
+Supported rule fields:
+
+- `length` (number): generated value length, clamped to 8..256
+- `charset` (string): one of `alnum`, `hex`, `numeric`, `alpha`, `base64url`, `alnum_symbols`
+- `characters` (string): optional custom character set (overrides `charset`)
+- `regex` (string): optional JavaScript regex pattern that the generated value must satisfy
 
 ## Checklist
 
