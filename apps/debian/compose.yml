@@ -7,8 +7,8 @@ services:
       yantr.app: "debian"
       yantr.service: "SSH Server"
     environment:
-      SSH_USER: ${SSH_USER:-admin}
-      SSH_PASSWORD: ${SSH_PASSWORD:-changeme}
+      SSH_USER: ${SSH_USER}
+      SSH_PASSWORD: ${SSH_PASSWORD}
     ports:
       - "22"
     restart: unless-stopped

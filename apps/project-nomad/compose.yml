@@ -16,14 +16,14 @@ services:
       NODE_ENV: production
       PORT: 8080
       LOG_LEVEL: info
-      APP_KEY: ${NOMAD_APP_KEY:-changemechangeme123}
+      APP_KEY: ${NOMAD_APP_KEY}
       HOST: 0.0.0.0
       URL: ${NOMAD_URL:-http://localhost:8080}
       DB_HOST: mysql
       DB_PORT: 3306
       DB_DATABASE: nomad
       DB_USER: nomad_user
-      DB_PASSWORD: ${NOMAD_DB_PASSWORD:-changeme}
+      DB_PASSWORD: ${NOMAD_DB_PASSWORD}
       DB_NAME: nomad
       DB_SSL: false
       REDIS_HOST: redis
@@ -47,15 +47,15 @@ services:
       yantr.app: "project-nomad"
       yantr.service: "Database"
     environment:
-      MYSQL_ROOT_PASSWORD: ${NOMAD_MYSQL_ROOT_PASSWORD:-changeme}
+      MYSQL_ROOT_PASSWORD: ${NOMAD_MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: nomad
       MYSQL_USER: nomad_user
-      MYSQL_PASSWORD: ${NOMAD_DB_PASSWORD:-changeme}
+      MYSQL_PASSWORD: ${NOMAD_DB_PASSWORD}
     volumes:
       - project_nomad_mysql:/var/lib/mysql
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${NOMAD_MYSQL_ROOT_PASSWORD:-changeme}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${NOMAD_MYSQL_ROOT_PASSWORD}"]
       interval: 30s
       timeout: 10s
       retries: 5

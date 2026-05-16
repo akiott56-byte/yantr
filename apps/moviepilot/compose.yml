@@ -19,8 +19,8 @@ services:
       PGID: 0
       UMASK: "000"
       TZ: ${TZ:-Asia/Shanghai}
-      SUPERUSER: ${SUPERUSER:-admin}
-      SUPERUSER_PASSWORD: ${SUPERUSER_PASSWORD:-changeme}
+      SUPERUSER: ${SUPERUSER}
+      SUPERUSER_PASSWORD: ${SUPERUSER_PASSWORD}
     restart: unless-stopped
     labels:
       yantr.app: "moviepilot"

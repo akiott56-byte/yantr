@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-SSH_USER="${SSH_USER:-admin}"
-SSH_PASSWORD="${SSH_PASSWORD:-changeme}"
+SSH_USER="${SSH_USER}"
+SSH_PASSWORD="${SSH_PASSWORD}"
 
 # Create user only if it doesn't exist
 if ! id -u "$SSH_USER" &>/dev/null; then
