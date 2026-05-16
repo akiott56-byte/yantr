@@ -185,22 +185,6 @@ function getRelatedApps(app, allApps, count = 3) {
   return others.slice(0, count);
 }
 
-function buildCatalogPage(env, apps, generatedAt) {
-  const catalogDir = path.join(websiteDir, 'catalog');
-  fs.mkdirSync(catalogDir, { recursive: true });
-
-  const html = env.render('catalog.njk', {
-    apps,
-    generatedAt,
-    pageTitle: 'App Catalog | Yantr',
-    pageDescription: `Browse ${apps.length}+ self-hosted apps you can run with Docker using Yantr. Find app pages for installation, ports, dependencies, and Docker Compose details.`,
-    pageUrl: `${siteUrl}/catalog/`,
-    tags: [...new Set(apps.flatMap((app) => app.tags))].sort(),
-  });
-
-  fs.writeFileSync(path.join(catalogDir, 'index.html'), html, 'utf8');
-}
-
 function buildPages() {
   buildAppsJson();
 
@@ -216,8 +200,6 @@ function buildPages() {
 
   fs.rmSync(appsOutputDir, { recursive: true, force: true });
   fs.mkdirSync(appsOutputDir, { recursive: true });
-
-  buildCatalogPage(env, apps, generatedAt);
 
   for (const app of apps) {
     const appDir = path.join(appsOutputDir, app.id);

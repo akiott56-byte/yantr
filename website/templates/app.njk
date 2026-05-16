@@ -45,12 +45,6 @@
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "App Catalog",
-          "item": "https://yantr.org/catalog/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
           "name": "{{ app.name }}",
           "item": "{{ pageUrl }}"
         }
@@ -101,9 +95,9 @@
     <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
 
       <!-- Breadcrumb -->
-      <a href="../../catalog/" class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-black transition-colors mb-10">
+      <a href="../../#all-apps" class="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-black transition-colors mb-10">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-        Back to catalog
+        All apps
       </a>
 
       <!-- Hero -->
@@ -118,7 +112,7 @@
           {% if app.tags.length %}
             <div class="mt-4 flex flex-wrap gap-1.5">
               {% for tag in app.tags %}
-                <a href="../../catalog/?tag={{ tag }}" class="text-[10px] uppercase tracking-wider px-2.5 py-1 border border-gray-200 text-gray-400 hover:border-black hover:text-black transition-colors rounded-full font-sans">{{ tag }}</a>
+                <span class="text-[10px] uppercase tracking-wider px-2.5 py-1 border border-gray-200 text-gray-400 rounded-full font-sans">{{ tag }}</span>
               {% endfor %}
             </div>
           {% endif %}
