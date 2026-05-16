@@ -1293,7 +1293,15 @@
 
         let activeTag = "all";
 
-        // Build tag pill buttons from meta.tags
+        // Build tag pill buttons — only for tags with > 2 apps
+        const tagCounts = {};
+        for (const app of allApps) {
+          for (const tag of (app.tags || [])) {
+            tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+          }
+        }
+        const popularTags = allTags.filter(t => tagCounts[t] > 2);
+
         if (tagsBar) {
           const makeBtn = (tag, label) => {
             const btn = document.createElement("button");
@@ -1304,7 +1312,7 @@
             return btn;
           };
           tagsBar.appendChild(makeBtn("all", "All"));
-          for (const tag of allTags) tagsBar.appendChild(makeBtn(tag, tag));
+          for (const tag of popularTags) tagsBar.appendChild(makeBtn(tag, tag));
 
           tagsBar.addEventListener("click", (e) => {
             const btn = e.target.closest(".tag-btn");
