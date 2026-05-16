@@ -10,7 +10,7 @@
     "tools"
   ],
   "short_description": "A modern self-hosted platform for managing Minecraft servers with built-in mod support.",
-  "description": "Craftbox is a self-hosted web panel for creating, configuring, monitoring, and managing Minecraft servers — no command-line expertise or dodgy download pages required.",
+  "description": "Craftbox is a self-hosted web panel for managing Minecraft servers — no command-line expertise required. Supports Vanilla, Paper, Purpur, Folia, Fabric, Forge, and NeoForge. Includes scheduled backups, one-click restore, plugin/mod management, and live player tracking.",
   "usecases": [
     "Run and manage multiple Minecraft servers from a single panel, each with its own console, watchdog, and configuration.",
     "Choose from Vanilla, Paper, Purpur, Folia, Fabric, Forge, NeoForge, and custom JAR uploads.",
@@ -27,12 +27,12 @@
       "label": "Web UI"
     },
     {
-      "port": "25500-25600",
+      "port": 25500,
       "protocol": "TCP",
       "label": "Minecraft Java Server"
     },
     {
-      "port": "25500-25600",
+      "port": 25501,
       "protocol": "UDP",
       "label": "Plugins/Mods"
     }

@@ -18,7 +18,7 @@
     }
   ],
   "short_description": "Self-hosted Blossom/NIP-96 media server for the Nostr ecosystem.",
-  "description": "Route96 is a self-hosted media server for Nostr, implementing the Blossom protocol (BUD-01 through BUD-09) and NIP-96 standard. Built in Rust for high performance, it handles file uploads, image/video compression, WebP conversion, thumbnail generation, EXIF privacy protection, per-user quotas, and an admin dashboard for content moderation.",
+  "description": "Route96 is a self-hosted Nostr media server implementing the Blossom protocol and NIP-96. Built in Rust, it handles file uploads, image/video compression, WebP conversion, thumbnails, EXIF privacy protection, per-user quotas, and an admin moderation dashboard.",
   "usecases": [
     "Host your own Nostr media server for personal or community file storage.",
     "Serve images and videos to Nostr clients with Blossom and NIP-96 support.",
