@@ -6,10 +6,11 @@
     "privacy",
     "storage",
     "files",
-    "utility"
+    "utility",
+    "self-hosted"
   ],
-  "short_description": "A self-hosted, privacy-first file sharing system with both hosted upload and direct P2P transfer capabilities.",
-  "description": "Dropgate Server is the official backend and reference implementation for secure, privacy-focused file sharing using Dropgate (DGUP and DGDTP) protocols.",
+  "short_description": "Privacy-first self-hosted file sharing with hosted upload and P2P transfer.",
+  "description": "Dropgate Server is the official backend and reference implementation for secure, privacy-focused file sharing using the Dropgate DGUP and DGDTP protocols. It ships a web UI for browser-based transfers and supports native clients on Windows, Mac, and Linux for direct P2P connections.",
   "usecases": [
     "Create your own private and secure self-hosted file transfer system that you run on your own terms.",
     "Access the Web UI to use Dropgate in your browser, or download the official native Dropgate Client app to connect to Dropgate Servers from Windows, Mac, and Linux.",
