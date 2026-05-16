@@ -33,6 +33,12 @@ environment:
   - ADMIN_USER=${ADMIN_USER:-admin}
 ```
 
+Credential and secret environment variables:
+
+- Do not provide placeholder defaults for user-supplied credentials or secrets in `compose.yml` (for example, avoid `:-admin`, `:-password`, `:-changeme`)
+- Require explicit values instead (for example, `ADMIN_PASSWORD: ${ADMIN_PASSWORD}`)
+- If a variable is required from the user, add a matching `env_generators` entry in `info.json` so the deploy UI can generate a secure value
+
 Ports: publish as needed (`"8080"` or `"53:53/udp"`)
 
 Images: prefer `:latest` tags over pinned version tags when defining app images
@@ -65,6 +71,11 @@ Required fields:
 - `customapp` - optional boolean, set to `true` for apps custom-built by the Yantr team (e.g. apps with a `Dockerfile` in the folder). Custom apps show a "Built by Yantr" badge in the UI and have the auto-update button disabled since they use a locally-built image that watchtower cannot update.
 - `env_generators` - optional map of env var names to secure generation rules used by the deploy UI
 
+Rules for required env vars:
+
+- Any credential/secret variable that is required in `compose.yml` should have a corresponding key in `env_generators`
+- Prefer secure defaults in generator rules (`alnum_symbols` and length 16+ for passwords, length 32+ for secrets/tokens)
+
 `env_generators` example:
 
 ```json
@@ -90,6 +101,8 @@ Supported rule fields:
 - [ ] `yantr.app` = folder name
 - [ ] `yantr.service` = display label
 - [ ] valid, deployable compose file
+- [ ] required credential/secret env vars have no placeholder defaults in `compose.yml`
+- [ ] required credential/secret env vars are covered by `env_generators` in `info.json`
 - [ ] declare dependencies in `info.json`
 - [ ] document unusual host access in `notes`
 - [ ] describe user-facing ports in `info.json`
