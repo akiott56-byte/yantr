@@ -9,10 +9,7 @@ services:
       - gitea-mirror-data:/app/data
     environment:
       PORT: 4321
-      PUID: 1000
-      PGID: 1000
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-changeme-use-a-long-random-secret}
-      TZ: ${TZ:-UTC}
     labels:
       yantr.app: "gitea-mirror"
       yantr.service: "Git Mirror"
