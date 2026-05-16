@@ -235,6 +235,11 @@
       .animate-float-y {
         animation: floatY 3.2s ease-in-out infinite;
       }
+      .tag-btn.active {
+        background-color: #000;
+        color: #fff;
+        border-color: #000;
+      }
       @keyframes requirementFill {
         from {
           transform: scaleX(0);
@@ -991,6 +996,11 @@
             </div>
           </div>
 
+          <!-- Tag filters -->
+          <div id="all-apps-tags" class="flex flex-wrap gap-2 mb-6">
+            <!-- Populated by loadAllApps() -->
+          </div>
+
           <div id="all-apps-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <!-- Populated by loadAllApps() -->
           </div>
@@ -1264,18 +1274,46 @@
       async function loadAllApps() {
         const grid = document.getElementById("all-apps-grid");
         const empty = document.getElementById("all-apps-empty");
+        const tagsBar = document.getElementById("all-apps-tags");
         const searchInput = document.getElementById("apps-search");
         const sortSelect = document.getElementById("apps-sort-select");
         if (!grid) return;
 
         let allApps = [];
+        let allTags = [];
         try {
           const res = await fetch("./apps.json");
           const data = await res.json();
           allApps = Array.isArray(data.apps) ? data.apps : [];
+          allTags = Array.isArray(data.meta && data.meta.tags) ? data.meta.tags : [];
         } catch (e) {
           console.error("Failed to load apps.json", e);
           return;
+        }
+
+        let activeTag = "all";
+
+        // Build tag pill buttons from meta.tags
+        if (tagsBar) {
+          const makeBtn = (tag, label) => {
+            const btn = document.createElement("button");
+            btn.dataset.tag = tag;
+            btn.className = "tag-btn text-[10px] uppercase tracking-wider px-3 py-1.5 border border-gray-300 hover:border-black transition-colors rounded-md";
+            btn.textContent = label;
+            if (tag === "all") btn.classList.add("active");
+            return btn;
+          };
+          tagsBar.appendChild(makeBtn("all", "All"));
+          for (const tag of allTags) tagsBar.appendChild(makeBtn(tag, tag));
+
+          tagsBar.addEventListener("click", (e) => {
+            const btn = e.target.closest(".tag-btn");
+            if (!btn) return;
+            activeTag = btn.dataset.tag;
+            tagsBar.querySelectorAll(".tag-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            render();
+          });
         }
 
         function appCard(app) {
@@ -1298,13 +1336,12 @@
           const q = (searchInput ? searchInput.value : "").toLowerCase().trim();
           const sort = sortSelect ? sortSelect.value : "alpha";
 
-          let filtered = q
-            ? allApps.filter(a =>
-                a.name.toLowerCase().includes(q) ||
-                (a.short_description || "").toLowerCase().includes(q) ||
-                (a.tags || []).some(t => t.includes(q))
-              )
-            : [...allApps];
+          let filtered = allApps.filter(a => {
+            const matchesTag = activeTag === "all" || (a.tags || []).includes(activeTag);
+            const haystack = `${a.name} ${a.short_description || ""} ${(a.tags || []).join(" ")}`.toLowerCase();
+            const matchesSearch = !q || haystack.includes(q);
+            return matchesTag && matchesSearch;
+          });
 
           if (sort === "alpha") {
             filtered.sort((a, b) => a.name.localeCompare(b.name));
