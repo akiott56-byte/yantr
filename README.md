@@ -1,34 +1,58 @@
 <div align="center">
 
-# Yantr
+<h1>⚡ Yantr</h1>
 
-**Turn the machine you already own into a powerful, isolated homelab.**
+<p><strong>Your self-hosted app store — runs alongside your existing OS, no hardware takeover required.</strong></p>
 
-[![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://github.com/besoeasy/yantr/pkgs/container/yantr)
-[![Vue](https://img.shields.io/badge/Vue-3-42b883?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org)
-[![License](https://img.shields.io/badge/License-ISC-blue.svg?style=for-the-badge)](LICENSE)
+<p>
+  <a href="https://github.com/besoeasy/yantr/pkgs/container/yantr"><img src="https://img.shields.io/badge/Docker-ghcr.io-0db7ed?style=flat-square&logo=docker&logoColor=white" alt="Docker"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-ISC-blue?style=flat-square" alt="License"></a>
+  <img src="https://img.shields.io/badge/Vue-3-42b883?style=flat-square&logo=vue.js&logoColor=white" alt="Vue 3">
+  <img src="https://img.shields.io/badge/Fastify-5-000000?style=flat-square&logo=fastify&logoColor=white" alt="Fastify">
+  <a href="https://yantr.org"><img src="https://img.shields.io/badge/Website-yantr.org-5c6bc0?style=flat-square" alt="Website"></a>
+</p>
+
+<p>
+  <a href="#-quick-start">Quick Start</a> ·
+  <a href="#-app-catalog">App Catalog</a> ·
+  <a href="#-features">Features</a> ·
+  <a href="https://yantr.org">Website</a> ·
+  <a href="https://github.com/besoeasy/yantr/issues">Report a Bug</a>
+</p>
 
 </div>
 
 ---
 
-## Why Yantr?
+## The Problem with Other Homelab Platforms
 
-Most homelab platforms (like Umbrel, CasaOS, or Proxmox) demand total hardware control. They want to be the Operating System, requiring you to dedicate and wipe a machine just to run a few network apps.
+Umbrel, CasaOS, Proxmox — they all want to **be your operating system**. You have to wipe a machine, hand it over entirely, and fight to get your workflow back if anything goes wrong.
 
-**Yantr flips the model.**
+**Yantr takes a different approach.**
 
-It is a lightweight, self-hosted App Store that runs _alongside_ your existing OS. Whether you are using a daily-driver MacBook, a gaming PC, or an existing Linux server, Yantr lets you spin up powerful software instantly without taking over your machine.
+It runs **as a container** on the machine you already have. Daily-driver laptop, gaming PC, old server — it doesn't matter. Install it in 30 seconds, deploy 130+ apps from the catalog, and remove it just as cleanly when you're done. Your OS stays exactly as you left it.
 
-- **Zero OS Footprint:** Yantr never touches your host filesystem. Everything runs exclusively in isolated Docker containers and virtual volumes.
-- **No Dependency Hell:** Run complex AI models, media servers, and databases simultaneously. Because everything is isolated, you will never face a Python, Node, or CUDA version conflict.
-- **Install, Use, Destroy:** Spin up an app, use it, and delete it. No leftover registry keys, background services, or hidden configuration files scattered across your system.
+```
+┌─────────────────────────────────────────┐
+│           Your Operating System         │
+│                                         │
+│  ┌─────────────┐   ┌─────────────────┐  │
+│  │    Yantr    │   │  Your existing  │  │
+│  │  container  │   │   apps & files  │  │
+│  └──────┬──────┘   └─────────────────┘  │
+│         │ Docker API                    │
+│  ┌──────▼──────────────────────────┐    │
+│  │  Jellyfin · n8n · Nextcloud ...  │   │
+│  │     (isolated Docker stacks)     │   │
+│  └──────────────────────────────────┘   │
+└─────────────────────────────────────────┘
+```
 
-<br/>
+---
 
-## Quick Start
+## 🚀 Quick Start
 
-Launch Yantr in seconds with a single command. Requires Docker.
+> **Requires:** Docker — [install guide](https://yantr.org/install-docker.html)
 
 ```bash
 docker run -d \
@@ -40,47 +64,107 @@ docker run -d \
   ghcr.io/besoeasy/yantr
 ```
 
-Navigate to `http://localhost:5252` in your browser. You are ready to go.
+Open **http://localhost:5252** — that's it. No config files, no accounts, no setup wizard.
 
-If you need step-by-step instructions to install Docker on your host, see the official Yantr Docker installation guide:
+---
 
-- https://yantr.org/install-docker.html
+## 📦 App Catalog
 
-<br/>
+130+ curated apps, all ready to deploy in one click.
 
-## Core Features
+| Category | Apps |
+|---|---|
+| 🤖 AI & Agents | Open WebUI, Perplexica, Agent Zero, Hermes Agent, Kokoro |
+| 🎬 Media | Jellyfin, Emby, Airsonic, Fireshare, Metube, Stremio, Swingmusic |
+| 📥 Downloads | qBittorrent, Transmission, Deluge, Radarr, Sonarr, Jackett, Prowlarr |
+| 💰 Finance | Actual Budget, Maybe, Ghostfolio, Rotki, Cryptofolio, Monetr |
+| ☁️ Cloud & Files | Nextcloud, Seafile, Syncthing, MinIO, Droppy, Samba |
+| 🔐 Privacy & Security | Vaultwarden, AdGuard Home, Pi-hole, WireGuard, Tor Browser |
+| 🛠️ Dev Tools | Supabase, PostgreSQL, MariaDB, MongoDB, n8n, Dockge, Gitea Mirror |
+| 📡 Networking | Tailscale, Cloudflared, Glances, Smokeping, Snort, Librespeed |
+| 📝 Productivity | Memos, Jotty, Wiki.js, Linkwarden, Miniflux, FreshRSS |
+| 💬 Comms | Element (Matrix), Synapse, Nostr relay (strfry), Gotify |
+| ⛓️ Bitcoin | Bitcoin Knots, Monerod, Specter Desktop, Cashu.me |
+| 🐧 Linux Boxes | Debian + SSH, Alpine + SSH (disposable or long-lived) |
 
-| Area | Feature | What it does |
-| --- | --- | --- |
-| Platform | Zero OS Footprint | Runs alongside your existing OS in Docker without taking over the machine. |
-| Platform | No Lock-In | Keeps everything in standard Docker Compose and Docker volumes so you retain full control outside Yantr. |
-| Deployment | One-Command Install | Starts Yantr itself with a single `docker run` command. |
-| Deployment | App Catalog | Ships curated app templates across AI, media, finance, networking, databases, and developer tools. |
-| Deployment | One-Click App Deploys | Launches catalog apps instantly without manually wiring compose files and dependencies. |
-| Deployment | Latest Upstream Versions | Tracks current upstream app versions through maintained catalog templates. |
-| Interface | Web UI | Provides a fast Vue-based UI with real-time status, dense operations, and dark mode support. |
-| Interface | REST API | Exposes installs, removals, logs, backups, and status checks through JSON endpoints. |
-| Interface | CLI / Scriptable Automation | Works with `curl`, shell scripts, cron, and headless automation through the API. |
-| Networking | Docker-Native Port Management | Supports Docker-style mappings like `8080:80` or `80`, including opening extra ports after deployment. |
-| Networking | Port Conflict Detection | Tracks allocated host ports to prevent collisions between deployed apps. |
-| Networking | Internal Service Routing | Manages Docker network routing and service-to-service communication between stack services. |
-| Remote Access | Tailscale Integration | Makes private operator access possible without traditional port forwarding. |
-| Remote Access | Cloudflare Tunnel Integration | Publishes services publicly without exposing inbound ports on your router. |
-| Remote Access | Caddy Auth Proxy | Adds an authenticated front door to internal apps with a one-click reverse proxy pattern. |
-| Storage | Volume Manager | Keeps app data isolated in Docker volumes and avoids orphaned state on install or removal. |
-| Storage | Direct Volume Access | Lets you browse and manage persistent data from the browser via built-in volume tooling. |
-| Backup | Restic Backups | Supports encrypted scheduled backups and point-in-time restore to local, S3-compatible, or B2 storage. |
-| Lifecycle | Temporary Installs | Allows ephemeral apps with expiration timers and automatic cleanup. |
-| Lifecycle | Clean Removal | Removes apps without leaving hidden background services, host dependencies, or stray data behind. |
-| Linux Environments | Debian and Alpine Boxes | Deploys ready-to-use Linux environments with SSH access as disposable or long-lived utility boxes. |
-| Linux Environments | Post-Deploy Port Publishing | Lets Debian/Alpine boxes expose more services later using the same Docker syntax users already know. |
+> Browse the full list in [apps/](apps/) · Contribute a new app via [apps/apps.md](apps/apps.md)
 
-<br/>
+---
+
+## ✨ Features
+
+### Zero OS Footprint
+Yantr never touches your host filesystem. Every app lives in its own Docker stack with isolated volumes. Remove an app and nothing is left behind — no registry keys, no background services, no scattered config files.
+
+### One-Click Deploys
+Pick an app from the catalog, click deploy. Yantr handles compose file wiring, port allocation, and volume setup automatically.
+
+### No Dependency Hell
+AI models, media servers, and databases run side-by-side without version conflicts. Python, Node, CUDA — each app brings its own runtime inside its container.
+
+### Full Lifecycle Control
+
+| Action | What happens |
+|---|---|
+| **Install** | Pulls images, starts the stack, registers ports |
+| **Update** | Pulls latest images, recreates containers |
+| **Backup** | Encrypted Restic snapshot to local / S3 / B2 |
+| **Remove** | Stops stack, removes containers, cleans volumes |
+
+### Networking & Remote Access
+
+- **Port conflict detection** — Yantr tracks every allocated host port to prevent collisions
+- **Tailscale** — private operator access without port forwarding
+- **Cloudflare Tunnel** — publish services publicly without opening your router
+- **Caddy reverse proxy** — add auth and HTTPS in front of any internal app
+
+### Storage & Backups
+- Browse and manage volume data directly from the browser
+- Restic-powered encrypted backups with scheduled runs and point-in-time restore
+- Supports local paths, S3-compatible stores, and Backblaze B2
+
+### REST API + CLI-Friendly
+
+Every operation — install, remove, logs, backup, status — is available as a JSON endpoint. Automate with `curl`, shell scripts, or cron.
+
+```bash
+# Check running apps
+curl http://localhost:5252/api/stacks
+
+# Deploy an app
+curl -X POST http://localhost:5252/api/stack/jellyfin/up
+```
+
+---
+
+## 🏗️ How It Works
+
+Yantr is a single Docker container that:
+
+1. **Serves a Vue 3 web UI** on port `5252`
+2. **Exposes a Fastify REST API** that manages Docker via the socket
+3. **Reads app templates** from its built-in catalog (Docker Compose + metadata)
+4. **Deploys isolated stacks** — each app is an independent Docker Compose project
+
+No databases, no external dependencies, no agents on the host.
+
+---
+
+## 🤝 Contributing
+
+PRs are welcome. To add an app to the catalog, follow the format in [apps/apps.md](apps/apps.md). After editing any app in `apps/`, run:
+
+```bash
+node check.js
+```
+
+Fix any format issues it reports before opening a PR.
 
 ---
 
 <div align="center">
+  <sub>Built with Vue 3 · Fastify · Docker · Tailwind CSS</sub>
   <br/>
-  <a href="https://github.com/besoeasy/yantr/issues">Report an Issue</a> • <a href="apps/apps.md">App Format Guide</a>
   <br/>
+  <a href="https://yantr.org">yantr.org</a> · <a href="https://github.com/besoeasy/yantr/issues">Issues</a> · <a href="apps/apps.md">App Format Guide</a>
 </div>
