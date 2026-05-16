@@ -37,7 +37,7 @@ Credential and secret environment variables:
 
 - Do not provide placeholder defaults for user-supplied credentials or secrets in `compose.yml` (for example, avoid `:-admin`, `:-password`, `:-changeme`)
 - Require explicit values instead (for example, `ADMIN_PASSWORD: ${ADMIN_PASSWORD}`)
-- If a variable is required from the user, add a matching `env_generators` entry in `info.json` so the deploy UI can generate a secure value
+- If a variable is required from the user, add a matching `env_generators` entry in `info.json` so each field has its own generate button
 
 Ports: publish as needed (`"8080"` or `"53:53/udp"`)
 
@@ -69,7 +69,7 @@ Required fields:
 - `dependencies` - array of app IDs (can be empty)
 - `notes` - optional array of operational caveats
 - `customapp` - optional boolean, set to `true` for apps custom-built by the Yantr team (e.g. apps with a `Dockerfile` in the folder). Custom apps show a "Built by Yantr" badge in the UI and have the auto-update button disabled since they use a locally-built image that watchtower cannot update.
-- `env_generators` - optional map of env var names to secure generation rules used by the deploy UI
+- `env_generators` - optional map of env var names to generation rules used by each env field in the deploy UI
 
 Rules for required env vars:
 

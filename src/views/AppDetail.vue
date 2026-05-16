@@ -5,7 +5,7 @@ import { useNotification } from '../composables/useNotification';
 import { useApiUrl } from "../composables/useApiUrl";
 import { usePortConflict } from "../composables/usePortConflict";
 import { useI18n } from "vue-i18n";
-import { Globe, FileCode, Package, Clock, Tag, ExternalLink, Activity, Info, AlertTriangle, Check, Terminal, Play, CreditCard, RotateCcw, Download, Plus, X } from "lucide-vue-next";
+import { Globe, FileCode, Package, Clock, Tag, ExternalLink, Activity, Info, AlertTriangle, Check, Terminal, Play, CreditCard, Download, Plus, X } from "lucide-vue-next";
 import { buildChatGptExplainUrl } from "../utils/chatgpt";
 
 const route = useRoute();
@@ -86,11 +86,6 @@ const missingDependencies = computed(() => {
 
 const canDeploy = computed(() => {
   return !deploying.value;
-});
-
-const hasGeneratorRules = computed(() => {
-  const rules = app.value?.envGenerators;
-  return !!rules && Object.keys(rules).length > 0;
 });
 
 const chatGptUrl = computed(() => {
@@ -199,32 +194,6 @@ function generateEnvValue(envVar) {
     toast.success(t('appDetail.generatedValue', { envVar }));
   } catch (error) {
     toast.error(error.message || t('appDetail.generationFailed'));
-  }
-}
-
-function generateAllSecureValues() {
-  if (!app.value?.environment?.length) return;
-
-  let generatedCount = 0;
-  app.value.environment.forEach((env) => {
-    const existingValue = envValues.value[env.envVar];
-    if (existingValue) return;
-
-    const rule = getGeneratorRule(env.envVar);
-    if (!rule) return;
-
-    try {
-      envValues.value[env.envVar] = generateValueForRule(rule);
-      generatedCount += 1;
-    } catch {
-      // Ignore a single-variable failure and continue generating others.
-    }
-  });
-
-  if (generatedCount > 0) {
-    toast.success(t('appDetail.generatedValuesCount', { count: generatedCount }));
-  } else {
-    toast.info(t('appDetail.noGeneratorForVariable'));
   }
 }
 
@@ -801,14 +770,6 @@ onMounted(async () => {
                   {{ t('appDetail.configuration') }}
                 </h2>
                 <div class="flex items-center gap-3">
-                  <button
-                    v-if="hasGeneratorRules && app.environment?.length > 0"
-                    @click="generateAllSecureValues"
-                    class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
-                  >
-                    <RotateCcw :size="12" />
-                    <span>{{ t('appDetail.generateSecure') }}</span>
-                  </button>
                   <button
                     v-if="dependencies.length > 0 && app.environment?.length > 0"
                     @click="fillFromDependencies"
