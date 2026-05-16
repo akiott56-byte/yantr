@@ -30,5 +30,19 @@
     "Minimum 4GB RAM for base installation; 32GB recommended for AI tools.",
     "Contains no telemetry - fully offline capable after initial install.",
     "No built-in authentication - use network-level controls for multi-user access."
-  ]
+  ],
+  "env_generators": {
+    "NOMAD_APP_KEY": {
+      "length": 48,
+      "charset": "alnum_symbols"
+    },
+    "NOMAD_DB_PASSWORD": {
+      "length": 32,
+      "charset": "alnum_symbols"
+    },
+    "NOMAD_MYSQL_ROOT_PASSWORD": {
+      "length": 32,
+      "charset": "alnum_symbols"
+    }
+  }
 }

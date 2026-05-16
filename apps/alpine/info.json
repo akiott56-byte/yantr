@@ -28,5 +28,15 @@
     "Default credentials are admin / changeme — change before exposing to the network",
     "Connect with: ssh SSH_USER@<host> -p <mapped-port>",
     "User is added to the wheel group with passwordless sudo"
-  ]
+  ],
+  "env_generators": {
+    "SSH_USER": {
+      "length": 8,
+      "charset": "alpha"
+    },
+    "SSH_PASSWORD": {
+      "length": 32,
+      "charset": "alnum_symbols"
+    }
+  }
 }

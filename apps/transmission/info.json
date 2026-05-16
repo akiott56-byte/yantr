@@ -31,5 +31,15 @@
     "Web interface runs on port 9091 by default",
     "Peer port is 51413 - needs to be accessible for optimal downloads",
     "LinuxServer.io image includes VPN and automatic cleanup features"
-  ]
+  ],
+  "env_generators": {
+    "TRANSMISSION_USER": {
+      "length": 8,
+      "charset": "alpha"
+    },
+    "TRANSMISSION_PASS": {
+      "length": 16,
+      "charset": "alnum_symbols"
+    }
+  }
 }

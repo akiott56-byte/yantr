@@ -26,5 +26,19 @@
     "Watch folder for automatic processing",
     "Gallery-style video organization",
     "Streaming playback"
-  ]
+  ],
+  "env_generators": {
+    "ADMIN_USERNAME": {
+      "length": 8,
+      "charset": "alpha"
+    },
+    "ADMIN_PASSWORD": {
+      "length": 16,
+      "charset": "alnum_symbols"
+    },
+    "SECRET_KEY": {
+      "length": 32,
+      "charset": "hex"
+    }
+  }
 }

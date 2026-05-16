@@ -30,5 +30,15 @@
     "Tag-based - no rigid project structure",
     "API available for automation",
     "Break tracking included"
-  ]
+  ],
+  "env_generators": {
+    "admin": {
+      "length": 8,
+      "charset": "alpha"
+    },
+    "mynewpassword": {
+      "length": 16,
+      "charset": "alnum_symbols"
+    }
+  }
 }

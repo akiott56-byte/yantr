@@ -27,5 +27,15 @@
     "Set SSH_USER and SSH_PASSWORD env vars before deploying",
     "Default credentials are admin / changeme — change before exposing to the network",
     "Connect with: ssh SSH_USER@<host> -p <mapped-port>"
-  ]
+  ],
+  "env_generators": {
+    "SSH_USER": {
+      "length": 8,
+      "charset": "alpha"
+    },
+    "SSH_PASSWORD": {
+      "length": 32,
+      "charset": "alnum_symbols"
+    }
+  }
 }

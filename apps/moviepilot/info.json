@@ -31,5 +31,15 @@
     "Mount your media directory (e.g., /media) for MoviePilot to organize downloaded files",
     "Requires a compatible downloader (qBittorrent, Transmission, or rTorrent) configured separately",
     "For production use, consider using PostgreSQL and Redis instead of the default SQLite database"
-  ]
+  ],
+  "env_generators": {
+    "SUPERUSER": {
+      "length": 8,
+      "charset": "alpha"
+    },
+    "SUPERUSER_PASSWORD": {
+      "length": 32,
+      "charset": "alnum_symbols"
+    }
+  }
 }

@@ -28,5 +28,15 @@
       "protocol": "HTTPS",
       "label": "Web UI"
     }
-  ]
+  ],
+  "env_generators": {
+    "BITCOIN_RPC_USER": {
+      "length": 8,
+      "charset": "alpha"
+    },
+    "BITCOIN_RPC_PASSWORD": {
+      "length": 32,
+      "charset": "alnum_symbols"
+    }
+  }
 }
