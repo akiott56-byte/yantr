@@ -22,7 +22,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json* ./
 
-RUN npm ci --prefer-offline --no-audit --omit=dev || npm install --omit=dev
+RUN  npm install --omit=dev
 
 RUN npm cache clean --force
 
