@@ -25,7 +25,7 @@ export default defineConfig({
         }
       }
     },
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 900,
     cssCodeSplit: true,
     sourcemap: false,
     minify: 'esbuild'
