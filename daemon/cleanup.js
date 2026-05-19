@@ -32,16 +32,17 @@ function log(level, message, ...args) {
 
 /**
  * Build a Set of volumes currently in use by containers (excluding specified containers)
+ * Reuses an existing container snapshot to avoid an extra Docker API scan.
  * Follows the batch operation pattern from /api/system/prune endpoint
+ * @param {Array<Object>} containers - Container list snapshot from Docker
  * @param {Set<string>} excludeContainerIds - Container IDs to exclude from check
  * @returns {Promise<Set<string>>} Set of volume names in use
  */
-async function getUsedVolumes(excludeContainerIds = new Set()) {
+async function getUsedVolumes(containers, excludeContainerIds = new Set()) {
   try {
-    const containers = await docker.listContainers({ all: true });
     const usedVolumes = new Set();
 
-    for (const container of containers) {
+    for (const container of containers || []) {
       // Skip excluded containers (ones being removed)
       if (excludeContainerIds.has(container.Id)) {
         continue;
@@ -127,8 +128,8 @@ export async function cleanupExpiredApps() {
     // Build Set of container IDs being removed (for volume check optimization)
     const expiredContainerIds = new Set(expiredContainers.map(e => e.container.Id));
 
-    // Batch operation: get all volumes in use by non-expired containers (single API call)
-    const usedVolumes = await getUsedVolumes(expiredContainerIds);
+    // Batch operation: derive all volumes in use by non-expired containers from the existing snapshot
+    const usedVolumes = await getUsedVolumes(containers, expiredContainerIds);
     if (usedVolumes === null) {
       throw new Error("Could not verify shared volume usage; aborting expired app cleanup to avoid deleting shared data");
     }
@@ -264,6 +265,21 @@ export async function cleanupExpiredApps() {
   }
 }
 
+let cleanupRunPromise = null;
+
+function runCleanupCycle(trigger) {
+  if (cleanupRunPromise) {
+    log("warn", `Skipping ${trigger} cleanup run because a previous cleanup is still running`);
+    return cleanupRunPromise;
+  }
+
+  cleanupRunPromise = cleanupExpiredApps().finally(() => {
+    cleanupRunPromise = null;
+  });
+
+  return cleanupRunPromise;
+}
+
 /**
  * Start automatic cleanup scheduler
  * @param {number} intervalMinutes - How often to run cleanup (default: 60 minutes)
@@ -274,16 +290,18 @@ export function startCleanupScheduler(intervalMinutes = 60) {
   log("info", `Starting cleanup scheduler (runs every ${intervalMinutes} minutes)`);
 
   // Run initial cleanup on startup
-  cleanupExpiredApps().catch((err) => {
+  runCleanupCycle("startup").catch((err) => {
     log("error", `Initial cleanup failed: ${err.message}`);
   });
   cleanupExpiredBrowsers();
 
   // Run cleanup on interval
-  setInterval(() => {
-    cleanupExpiredApps().catch((err) => {
+  const timer = setInterval(() => {
+    runCleanupCycle("scheduled").catch((err) => {
       log("error", `Scheduled cleanup failed: ${err.message}`);
     });
     cleanupExpiredBrowsers();
   }, intervalMs);
+
+  if (timer.unref) timer.unref();
 }
