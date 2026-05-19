@@ -1109,13 +1109,13 @@
           const contributors = data.contributors || [];
           if (!Array.isArray(contributors) || contributors.length === 0) return;
 
-          const humans = contributors.filter((contributor) => contributor?.type === "User" && contributor?.login && !contributor.login.endsWith("[bot]"));
+          const humans = contributors.filter((contributor) => contributor?.login && contributor?.avatar_url && contributor?.url);
           if (humans.length === 0) return;
 
           const contributorCard = (contributor) => {
             const contributionLabel = contributor.contributions === 1 ? "contribution" : "contributions";
             return `
-              <a href="${contributor.html_url}" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-white/[0.08] transition-all duration-200">
+              <a href="${contributor.url}" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-white/[0.08] transition-all duration-200">
                 <div class="relative">
                   <img src="${contributor.avatar_url}" alt="${contributor.login}" class="w-16 h-16 rounded-full border-2 border-white/10 object-cover group-hover:border-white/35 group-hover:scale-105 transition-all duration-200" loading="lazy" />
                 </div>

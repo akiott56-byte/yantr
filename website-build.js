@@ -252,6 +252,17 @@ async function fetchAllContributors() {
   return allContributors;
 }
 
+function normalizeContributors(contributors) {
+  return contributors
+    .filter((contributor) => contributor?.type === 'User' && contributor?.login && !contributor.login.endsWith('[bot]'))
+    .map((contributor) => ({
+      login: contributor.login,
+      contributions: contributor.contributions || 0,
+      avatar_url: contributor.avatar_url || '',
+      url: contributor.html_url || contributor.url || '',
+    }));
+}
+
 async function fetchGitHubData() {
   const githubDataPath = path.join(websiteDir, 'github-data.json');
 
@@ -272,7 +283,7 @@ async function fetchGitHubData() {
       fetchedAt: new Date().toISOString(),
       stars: repoData.stargazers_count || 0,
       forks: repoData.forks_count || 0,
-      contributors: allContributors,
+      contributors: normalizeContributors(allContributors),
     };
 
     fs.writeFileSync(githubDataPath, JSON.stringify(output, null, 2), 'utf8');
