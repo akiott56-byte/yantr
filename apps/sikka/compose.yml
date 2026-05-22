@@ -7,8 +7,8 @@ services:
       yantr.app: "sikka"
       yantr.service: "Node API and Wallet"
     environment:
-      miner: ${SIKKA_MINER_ADDRESS}
-      SIKKA_PUBLIC_URL: ${SIKKA_PUBLIC_URL}
+      miner: ${miner:-}
+      SIKKA_PUBLIC_URL: ${SIKKA_PUBLIC_URL:-}
     ports:
       - "8080"
     volumes:

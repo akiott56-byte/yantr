@@ -27,7 +27,7 @@
   "website": "https://github.com/sikkacrypto/sikka",
   "dependencies": [],
   "notes": [
-    "Set SIKKA_MINER_ADDRESS to a valid lower-case sikka1... address if you want to enable the built-in miner.",
+    "Set miner to a valid lower-case sikka1... bech32m address to enable the built-in miner (optional).",
     "Set SIKKA_PUBLIC_URL if this node should advertise a public URL to other Sikka peers.",
     "The container stores chain data in the named volume mounted at /home/sikka/data.",
     "The HTTP service on port 8080 serves both the API and the built-in wallet pages."
