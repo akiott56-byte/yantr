@@ -207,11 +207,8 @@ const volumeBackups = ref({});
 const backingUp = ref(false);
 const showRestoreMenu = ref({});
 
-// Tabs for port options
-const activePortTab = ref("add"); // 'add' | 'caddy'
-
 // Top-level section navigation
-const activeSection = ref("network"); // 'network' | 'containers' | 'storage' | 'config'
+const activeSection = ref("ports"); // 'ports' | 'auth' | 'containers' | 'storage' | 'config'
 
 // Build a port-number → {label, protocol} lookup from the info.json ports array
 function buildPortLabels(ports) {
@@ -809,7 +806,8 @@ onUnmounted(() => {
         <button
           v-for="sec in [
               ...(namedVolumes.length > 0 || otherMounts.length > 0 ? [{ id: 'storage', label: t('stackView.storageVolumes'), icon: HardDrive }] : []),
-            { id: 'network', label: t('stackView.networkAccess'), icon: Network },
+            { id: 'ports', label: t('stackView.openAnotherPort'), icon: Plus },
+            ...(stack.appId !== 'caddy-yantr' ? [{ id: 'auth', label: t('stackView.auth'), icon: ShieldCheck }] : []),
             { id: 'containers', label: t('stackView.containers'), icon: Server },
             ...(stackEnvVars.length > 0 ? [{ id: 'config', label: t('stackView.configurationVariables'), icon: Settings2 }] : []),
           ]"
@@ -906,26 +904,9 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <!-- NETWORK SECTION -->
-      <div v-show="activeSection === 'network'" class="space-y-4 animate-fadeIn">
-        <div class="flex gap-1 p-1 rounded-lg w-fit" style="background: var(--surface-muted)">
-          <button
-            @click="activePortTab = 'add'"
-            :class="activePortTab === 'add' ? 'bg-white dark:bg-zinc-800 smooth-shadow' : 'hover:bg-white/60 dark:hover:bg-zinc-800/60'"
-            :style="activePortTab === 'add' ? 'color: var(--text-primary)' : 'color: var(--text-secondary)'"
-            class="flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all hover:scale-[1.02]"
-          ><Plus :size="11" />{{ t("stackView.openAnotherPort") || "Open Port" }}</button>
-          <button
-            v-if="stack.appId !== 'caddy-yantr'"
-            @click="activePortTab = 'caddy'"
-            :class="activePortTab === 'caddy' ? 'bg-white dark:bg-zinc-800 smooth-shadow' : 'hover:bg-white/60 dark:hover:bg-zinc-800/60'"
-            :style="activePortTab === 'caddy' ? 'color: var(--text-primary)' : 'color: var(--text-secondary)'"
-            class="flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all hover:scale-[1.02]"
-          ><ShieldCheck :size="11" />{{ t("stackView.auth") || "Auth" }}</button>
-        </div>
-
-        <!-- Open Port form -->
-        <div v-show="activePortTab === 'add'" class="rounded-2xl p-6 smooth-shadow" style="background: var(--surface)">
+      <!-- OPEN PORT SECTION -->
+      <div v-show="activeSection === 'ports'" class="space-y-4 animate-fadeIn">
+        <div class="rounded-2xl p-6 smooth-shadow" style="background: var(--surface)">
           <div class="flex items-center gap-3 mb-5">
             <div class="w-10 h-10 rounded-xl flex items-center justify-center border border-gray-100 dark:border-zinc-800 shrink-0" style="background: var(--surface-muted)">
               <Plus :size="18" class="text-gray-500 dark:text-zinc-400" />
@@ -954,56 +935,56 @@ onUnmounted(() => {
             </button>
           </div>
         </div>
+      </div>
 
-        <!-- Caddy Auth -->
-        <div v-show="activePortTab === 'caddy' && stack.appId !== 'caddy-yantr'" class="space-y-4">
-          <div v-if="caddyProxies.length > 0" class="space-y-2">
-            <div class="text-xs font-bold uppercase tracking-wider mb-1" style="color: var(--text-secondary)">{{ t("stackView.caddyProxiesRunning") }}</div>
-            <div v-for="proxy in caddyProxies" :key="proxy.servePort" class="flex items-center justify-between gap-4 rounded-2xl px-5 py-4 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 hover:-translate-y-0.5 hover:shadow-md transition-all">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0 animate-pulse"></div>
-                <span class="text-sm font-bold text-emerald-700 dark:text-emerald-400 font-mono">:{{ proxy.servePort }} → localhost:{{ proxy.targetPort }}</span>
-                <span v-if="proxy.authEnabled" class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20">{{ proxy.authUser }}</span>
-              </div>
-              <button @click="disableCaddyAuth" :disabled="disablingCaddy" class="text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20 hover:scale-[1.03] active:scale-95 transition-all disabled:opacity-50">{{ disablingCaddy ? "..." : t("stackView.caddyAuthDisable") }}</button>
+      <!-- AUTH SECTION -->
+      <div v-show="activeSection === 'auth' && stack.appId !== 'caddy-yantr'" class="space-y-4 animate-fadeIn">
+        <div v-if="caddyProxies.length > 0" class="space-y-2">
+          <div class="text-xs font-bold uppercase tracking-wider mb-1" style="color: var(--text-secondary)">{{ t("stackView.caddyProxiesRunning") }}</div>
+          <div v-for="proxy in caddyProxies" :key="proxy.servePort" class="flex items-center justify-between gap-4 rounded-2xl px-5 py-4 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 hover:-translate-y-0.5 hover:shadow-md transition-all">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0 animate-pulse"></div>
+              <span class="text-sm font-bold text-emerald-700 dark:text-emerald-400 font-mono">:{{ proxy.servePort }} → localhost:{{ proxy.targetPort }}</span>
+              <span v-if="proxy.authEnabled" class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20">{{ proxy.authUser }}</span>
+            </div>
+            <button @click="disableCaddyAuth" :disabled="disablingCaddy" class="text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20 hover:scale-[1.03] active:scale-95 transition-all disabled:opacity-50">{{ disablingCaddy ? "..." : t("stackView.caddyAuthDisable") }}</button>
+          </div>
+        </div>
+        <div class="rounded-2xl p-6 smooth-shadow" style="background: var(--surface)">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center border border-purple-200 dark:border-purple-500/20 bg-purple-50 dark:bg-purple-500/10 shrink-0">
+              <ShieldCheck :size="18" class="text-purple-500" />
+            </div>
+            <div>
+              <div class="text-sm font-bold" style="color: var(--text-primary)">{{ t("stackView.caddyAuthHeading") }}</div>
+              <p class="text-xs mt-0.5" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthHint") }}</p>
             </div>
           </div>
-          <div class="rounded-2xl p-6 smooth-shadow" style="background: var(--surface)">
-            <div class="flex items-center gap-3 mb-5">
-              <div class="w-10 h-10 rounded-xl flex items-center justify-center border border-purple-200 dark:border-purple-500/20 bg-purple-50 dark:bg-purple-500/10 shrink-0">
-                <ShieldCheck :size="18" class="text-purple-500" />
-              </div>
-              <div>
-                <div class="text-sm font-bold" style="color: var(--text-primary)">{{ t("stackView.caddyAuthHeading") }}</div>
-                <p class="text-xs mt-0.5" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthHint") }}</p>
-              </div>
-            </div>
-            <div class="grid sm:grid-cols-2 gap-4 mb-5">
-              <label class="space-y-2">
-                <span class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthTargetPort") }}</span>
-                <input v-model="caddyAuth.targetPort" type="number" min="1" max="65535" placeholder="e.g. 8096" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/40 font-mono transition-shadow hover:border-purple-300" style="background: var(--surface-muted)" />
-                <p class="text-xs" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthTargetHint") }}</p>
-              </label>
-              <label class="space-y-2">
-                <span class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthServePort") }}</span>
-                <input v-model="caddyAuth.servePort" type="number" min="1024" max="65535" placeholder="e.g. 9096" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/40 font-mono transition-shadow hover:border-purple-300" style="background: var(--surface-muted)" />
-                <p class="text-xs" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthServeHint") }}</p>
-              </label>
-              <label class="space-y-2">
-                <span class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthUser") }}</span>
-                <input v-model="caddyAuth.user" type="text" placeholder="admin" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/40 font-mono transition-shadow hover:border-purple-300" style="background: var(--surface-muted)" />
-              </label>
-              <label class="space-y-2">
-                <span class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthPass") }}</span>
-                <input v-model="caddyAuth.pass" type="password" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/40 font-mono transition-shadow hover:border-purple-300" style="background: var(--surface-muted)" />
-                <p class="text-xs" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthPassHint") }}</p>
-              </label>
-            </div>
-            <div class="flex justify-end">
-              <button @click="deployCaddyAuth" :disabled="deployingCaddy || !caddyAuth.servePort || !caddyAuth.targetPort" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20 hover:bg-purple-100 dark:hover:bg-purple-500/20 hover:scale-[1.03] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                <ShieldCheck :size="14" :class="deployingCaddy ? 'animate-ping' : ''" />{{ deployingCaddy ? t("stackView.caddyAuthDeploying") : t("stackView.caddyAuthDeploy") }}
-              </button>
-            </div>
+          <div class="grid sm:grid-cols-2 gap-4 mb-5">
+            <label class="space-y-2">
+              <span class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthTargetPort") }}</span>
+              <input v-model="caddyAuth.targetPort" type="number" min="1" max="65535" placeholder="e.g. 8096" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/40 font-mono transition-shadow hover:border-purple-300" style="background: var(--surface-muted)" />
+              <p class="text-xs" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthTargetHint") }}</p>
+            </label>
+            <label class="space-y-2">
+              <span class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthServePort") }}</span>
+              <input v-model="caddyAuth.servePort" type="number" min="1024" max="65535" placeholder="e.g. 9096" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/40 font-mono transition-shadow hover:border-purple-300" style="background: var(--surface-muted)" />
+              <p class="text-xs" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthServeHint") }}</p>
+            </label>
+            <label class="space-y-2">
+              <span class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthUser") }}</span>
+              <input v-model="caddyAuth.user" type="text" placeholder="admin" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/40 font-mono transition-shadow hover:border-purple-300" style="background: var(--surface-muted)" />
+            </label>
+            <label class="space-y-2">
+              <span class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthPass") }}</span>
+              <input v-model="caddyAuth.pass" type="password" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-zinc-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500/40 font-mono transition-shadow hover:border-purple-300" style="background: var(--surface-muted)" />
+              <p class="text-xs" style="color: var(--text-secondary)">{{ t("stackView.caddyAuthPassHint") }}</p>
+            </label>
+          </div>
+          <div class="flex justify-end">
+            <button @click="deployCaddyAuth" :disabled="deployingCaddy || !caddyAuth.servePort || !caddyAuth.targetPort" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20 hover:bg-purple-100 dark:hover:bg-purple-500/20 hover:scale-[1.03] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+              <ShieldCheck :size="14" :class="deployingCaddy ? 'animate-ping' : ''" />{{ deployingCaddy ? t("stackView.caddyAuthDeploying") : t("stackView.caddyAuthDeploy") }}
+            </button>
           </div>
         </div>
       </div>

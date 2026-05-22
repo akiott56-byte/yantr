@@ -552,6 +552,7 @@
     "allPorts": "All Ports",
     "described": "Described",
     "openAnotherPort": "Open Another Port",
+    "auth": "Auth",
     "openAnotherPortHint": "Use Docker port syntax after deployment. Examples: 9000:9000, 9000 for auto host assignment, or 53:53/udp.",
     "portMappingLabel": "Port Mapping",
     "portMappingHint": "If you enter just 9000, Docker assigns a random host port for container port 9000. For multi-service stacks, pick which service gets the mapping.",
