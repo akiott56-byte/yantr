@@ -1,0 +1,18 @@
+services:
+  sikka:
+    image: ghcr.io/sikkacrypto/sikka:latest
+    container_name: sikka
+    restart: unless-stopped
+    labels:
+      yantr.app: "sikka"
+      yantr.service: "Node API and Wallet"
+    environment:
+      miner: ${SIKKA_MINER_ADDRESS}
+      SIKKA_PUBLIC_URL: ${SIKKA_PUBLIC_URL}
+    ports:
+      - "8080"
+    volumes:
+      - sikka-data:/home/sikka/data
+
+volumes:
+  sikka-data:
