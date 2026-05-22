@@ -123,11 +123,11 @@ export async function getAppsCatalogCached({ forceRefresh } = { forceRefresh: fa
         let match;
 
         const envVars = [];
-        const envRegex = /-\s+([A-Z_]+)=\$\{([A-Z_]+):?-?([^}]*)\}/g;
+        const envRegex = /-\s+([A-Za-z_][A-Za-z0-9_]*)=\$\{([A-Za-z_][A-Za-z0-9_]*):?-?([^}]*)\}/g;
         while ((match = envRegex.exec(composeContent)) !== null) {
           envVars.push({ name: match[1], envVar: match[2], default: match[3] || "" });
         }
-        const envKeyValueRegex = /^\s+([A-Z_][A-Z0-9_]*):\s*\$\{([A-Z_][A-Z0-9_]*):?-?([^}]*)\}/gm;
+        const envKeyValueRegex = /^\s+([A-Za-z_][A-Za-z0-9_]*):\s*\$\{([A-Za-z_][A-Za-z0-9_]*):?-?([^}]*)\}/gm;
         while ((match = envKeyValueRegex.exec(composeContent)) !== null) {
           if (!envVars.find(v => v.envVar === match[2])) {
             envVars.push({ name: match[1], envVar: match[2], default: match[3] || "" });
