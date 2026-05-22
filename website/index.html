@@ -172,6 +172,10 @@
         animation-play-state: paused;
         z-index: 20;
       }
+      #hero-stars {
+        overflow: clip;
+        contain: layout paint;
+      }
       @keyframes fadeInUp {
         from {
           opacity: 0;
@@ -586,6 +590,22 @@
       .feature-scroll-track:hover {
         animation-play-state: paused;
       }
+      @media (max-width: 639px) {
+        .full-bleed-mobile-safe {
+          left: auto;
+          right: auto;
+          width: auto;
+          margin-left: -1rem;
+          margin-right: -1rem;
+          transform: none;
+        }
+        .orbit-chip {
+          padding: 4px;
+        }
+        .orbit-chip span {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body class="bg-white text-black font-sans antialiased selection:bg-black selection:text-white overflow-x-hidden">
@@ -596,7 +616,7 @@
         <div id="hero-stars" class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"></div>
         <!-- Radial fade so orbiting chips don't overlap the text -->
         <div class="absolute inset-0 -z-10 pointer-events-none" style="background:radial-gradient(ellipse 55% 55% at 50% 50%, rgba(255,255,255,1) 30%, rgba(255,255,255,0.7) 60%, transparent 100%)"></div>
-        <div class="max-w-4xl mx-auto flex flex-col items-center text-center px-6 py-8">
+        <div class="max-w-4xl mx-auto flex flex-col items-center text-center px-4 sm:px-6 py-8">
           <div class="flex flex-col items-center text-center">
             <a
               href="./install-docker.html"
@@ -607,7 +627,7 @@
             </a>
             <h1
               id="hero-title"
-              class="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-2 font-sans text-black leading-[0.95] animate-fade-in-up delay-100"
+              class="text-4xl min-[400px]:text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-2 font-sans text-black leading-[0.95] animate-fade-in-up delay-100"
             >
               <span class="sr-only">YANTR</span>
               <span aria-hidden="true">
@@ -615,7 +635,7 @@
                 ><span class="hero-letter hero-letter-4">T</span><span class="hero-letter hero-letter-5">R</span>
               </span>
             </h1>
-            <p class="text-xl sm:text-2xl font-semibold text-gray-400 tracking-tight mb-5 font-sans animate-fade-in-up delay-150">
+            <p class="text-lg sm:text-2xl font-semibold text-gray-400 tracking-tight mb-5 font-sans animate-fade-in-up delay-150">
               The self-hosted app store for your hardware.
             </p>
             <p id="hero-desc" class="text-base text-gray-500 leading-relaxed max-w-2xl mb-6 font-sans animate-fade-in-up delay-200">
@@ -680,7 +700,7 @@
               </label>
               <code
                 id="install-cmd"
-                class="flex-1 block overflow-x-auto text-left text-[13px] text-gray-100 whitespace-nowrap bg-transparent px-4 py-3.5 sm:px-5 font-mono leading-relaxed hide-scrollbar"
+                class="flex-1 min-w-0 block overflow-visible whitespace-pre-wrap break-all text-left text-[12px] sm:text-[13px] text-gray-100 sm:overflow-x-auto sm:whitespace-nowrap sm:break-normal bg-transparent px-4 py-3.5 sm:px-5 font-mono leading-relaxed hide-scrollbar"
               ><span class="text-pink-400">run</span> -d --name yantr --network host -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes --restart unless-stopped ghcr.io/besoeasy/yantr</code>
               <button
                 id="copy-install"
@@ -714,7 +734,7 @@
       </div>
 
       <!-- App marquees — seamless continuation of the hero, full-bleed -->
-      <div class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden pt-4 pb-14" style="background-image:radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px);background-size:24px 24px;">
+      <div class="full-bleed-mobile-safe relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden pt-4 pb-14" style="background-image:radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px);background-size:24px 24px;">
         <div class="overflow-hidden py-2 w-full">
           <div class="flex items-center gap-3 app-marquee-track app-marquee-left" id="hero-app-marquee-1"></div>
         </div>
@@ -733,7 +753,7 @@
       </div>
 
       <!-- Features Section -->
-      <section id="features" class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 py-20 border-t border-gray-100 bg-white overflow-hidden">
+      <section id="features" class="full-bleed-mobile-safe relative left-1/2 right-1/2 w-screen -translate-x-1/2 py-20 border-t border-gray-100 bg-white overflow-hidden">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
           <div class="text-center mb-12">
             <p class="text-[11px] uppercase tracking-[0.2em] text-gray-500 mb-2">Features</p>
@@ -766,7 +786,7 @@
       </section>
 
       <!-- Contributors Section -->
-      <section id="contributors" class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 bg-black py-24 sm:py-32 overflow-hidden">
+      <section id="contributors" class="full-bleed-mobile-safe relative left-1/2 right-1/2 w-screen -translate-x-1/2 bg-black py-24 sm:py-32 overflow-hidden">
         <!-- Dot-grid decoration -->
         <div class="absolute inset-0 pointer-events-none" style="background-image:radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);background-size:28px 28px;"></div>
         <!-- Faint large number backdrop -->
@@ -810,7 +830,7 @@
       </section>
 
       <!-- System Requirements Section -->
-      <section id="requirements" class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-t border-gray-100 bg-white py-20 sm:py-28">
+      <section id="requirements" class="full-bleed-mobile-safe relative left-1/2 right-1/2 w-screen -translate-x-1/2 border-t border-gray-100 bg-white py-20 sm:py-28">
         <div class="max-w-5xl mx-auto px-4 sm:px-6">
           <div class="text-center mb-16">
             <p class="text-[11px] uppercase tracking-[0.22em] text-gray-500 font-semibold mb-3">System Requirements</p>
@@ -916,7 +936,7 @@
       </section>
 
       <!-- FAQ Section -->
-      <section class="relative left-1/2 right-1/2 w-screen -translate-x-1/2 py-20 sm:py-28 bg-black overflow-hidden" id="faq">
+      <section class="full-bleed-mobile-safe relative left-1/2 right-1/2 w-screen -translate-x-1/2 py-20 sm:py-28 bg-black overflow-hidden" id="faq">
         <!-- Dot-grid decoration matching community section -->
         <div class="absolute inset-0 pointer-events-none" style="background-image:radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);background-size:28px 28px;"></div>
         <div class="relative max-w-6xl mx-auto px-4 sm:px-6">
@@ -1222,12 +1242,19 @@
           const minDim = Math.min(window.innerWidth, window.innerHeight);
           const scale = Math.max(0.45, Math.min(1, minDim / 700));
 
-          const rings = [
-            { r: Math.round(145 * scale), count: 6,  dur: 38,  dir: "CW"  },
-            { r: Math.round(265 * scale), count: 10, dur: 62,  dir: "CCW" },
-            { r: Math.round(390 * scale), count: 13, dur: 88,  dir: "CW"  },
-            { r: Math.round(520 * scale), count: 13, dur: 115, dir: "CCW" },
-          ];
+          const isCompactHero = window.innerWidth < 640;
+          const rings = isCompactHero
+            ? [
+                { r: Math.round(100 * scale), count: 5, dur: 34, dir: "CW" },
+                { r: Math.round(175 * scale), count: 7, dur: 54, dir: "CCW" },
+                { r: Math.round(245 * scale), count: 8, dur: 76, dir: "CW" },
+              ]
+            : [
+                { r: Math.round(145 * scale), count: 6,  dur: 38,  dir: "CW"  },
+                { r: Math.round(265 * scale), count: 10, dur: 62,  dir: "CCW" },
+                { r: Math.round(390 * scale), count: 13, dur: 88,  dir: "CW"  },
+                { r: Math.round(520 * scale), count: 13, dur: 115, dir: "CCW" },
+              ];
 
           const totalNeeded = rings.reduce((s, ring) => s + ring.count, 0);
           const selectedApps = getRandomUniqueItems(appsWithLogo, totalNeeded);
@@ -1258,7 +1285,9 @@
               chip.className = "orbit-chip";
               chip.style.setProperty("--fade-dur",   fadeDur  + "s");
               chip.style.setProperty("--fade-delay", fadeDelay + "s");
-              chip.innerHTML = `<img src="${logoUrl}" style="width:17px;height:17px;" class="object-contain shrink-0" alt="${app.name}"><span class="text-xs font-semibold text-gray-600 whitespace-nowrap">${app.name}</span>`;
+              chip.innerHTML = isCompactHero
+                ? `<img src="${logoUrl}" style="width:17px;height:17px;" class="object-contain shrink-0" alt="${app.name}">`
+                : `<img src="${logoUrl}" style="width:17px;height:17px;" class="object-contain shrink-0" alt="${app.name}"><span class="text-xs font-semibold text-gray-600 whitespace-nowrap">${app.name}</span>`;
 
               arm.appendChild(chip);
               container.appendChild(arm);
