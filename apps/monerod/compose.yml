@@ -6,7 +6,6 @@ services:
     labels:
       yantr.app: "monerod"
       yantr.service: "Monero Node"
-    # Use container-only port format to avoid binding fixed host ports
     ports:
       - "18080/tcp"
       - "18089/tcp"
