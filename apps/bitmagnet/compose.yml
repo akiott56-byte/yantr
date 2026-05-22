@@ -1,6 +1,6 @@
 services:
   bitmagnet:
-    image: ghcr.io/bitmagnet-io/bitmagnet:v0.10
+    image: ghcr.io/bitmagnet-io/bitmagnet:latest
     container_name: bitmagnet
     restart: unless-stopped
     stop_grace_period: 1m
