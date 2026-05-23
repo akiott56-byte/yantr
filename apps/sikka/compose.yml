@@ -8,7 +8,7 @@ services:
       yantr.service: "Node API and Wallet"
     environment:
       miner: ${miner:-}
-      SIKKA_PUBLIC_URL: ${SIKKA_PUBLIC_URL:-}
+      nodeprivatekey: ${nodeprivatekey:-}
     ports:
       - "8080"
     volumes:
