@@ -7,7 +7,6 @@ services:
       yantr.app: "sikka"
       yantr.service: "Node API and Wallet"
     environment:
-      miner: ${miner:-}
       nodeprivatekey: ${nodeprivatekey:-}
     ports:
       - "8080"
