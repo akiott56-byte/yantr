@@ -16,6 +16,4 @@ services:
 
 volumes:
   qbittorrent-config:
-    name: qbittorrent-config
   qbittorrent-downloads:
-    name: qbittorrent-downloads

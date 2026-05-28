@@ -16,6 +16,4 @@ services:
 
 volumes:
   deluge-config:
-    name: deluge-config
   deluge-downloads:
-    name: deluge-downloads

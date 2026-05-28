@@ -16,4 +16,3 @@ services:
 
 volumes:
   gitea-mirror-data:
-    name: gitea-mirror-data

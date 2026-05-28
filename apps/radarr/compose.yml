@@ -15,8 +15,5 @@ services:
 
 volumes:
   radarr_config:
-    name: radarr_config
   radarr_movies:
-    name: radarr_movies
   radarr_downloads:
-    name: radarr_downloads
