@@ -53,8 +53,8 @@ fastify.addHook('onRequest', (req, reply, done) => {
   const port = getBrowserPort(volumeName)
 
   if (!port) {
-    reply.raw.writeHead(503, { 'content-type': 'text/html' })
-    reply.raw.end(`<h2>Volume browser for "${volumeName}" is not running.</h2><p>Start it from the Volumes page.</p>`)
+    reply.raw.writeHead(503, { 'content-type': 'text/plain; charset=utf-8' })
+    reply.raw.end(`Volume browser for "${volumeName}" is not running. Start it from the Volumes page.`)
     return done()
   }
 
