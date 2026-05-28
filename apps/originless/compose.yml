@@ -1,6 +1,6 @@
 services:
   originless:
-    image: ghcr.io/besoeasy/originless:main
+    image: ghcr.io/besoeasy/originless:latest
     container_name: originless
     hostname: originless
     environment:
@@ -18,6 +18,4 @@ services:
 
 volumes:
   originless:
-    labels:
-      yantr.app: "originless"
-      yantr.service: "Storage Volume"
+v
