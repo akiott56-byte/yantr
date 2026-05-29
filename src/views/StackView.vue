@@ -164,14 +164,29 @@ const activeSection = ref("ports"); // 'ports' | 'auth' | 'containers' | 'storag
 
 const sectionTabs = computed(() => [
   ...(namedVolumes.value.length > 0 || otherMounts.value.length > 0
-    ? [{ id: "storage", label: t("stackView.storageVolumes"), icon: HardDrive, tone: "text-emerald-500" }]
+    ? [{ id: "storage", label: t("system.volumes"), icon: HardDrive, tone: "text-emerald-500" }]
     : []),
-  { id: "ports", label: t("stackView.openAnotherPort"), icon: Plus, tone: "text-blue-500" },
+  { id: "ports", label: t("stackView.openPortAction"), icon: Plus, tone: "text-blue-500" },
   ...(stack.value?.appId !== "caddy-yantr"
     ? [{ id: "auth", label: t("stackView.auth"), icon: ShieldCheck, tone: "text-violet-500" }]
     : []),
   { id: "containers", label: t("stackView.containers"), icon: Server, tone: "text-amber-500" },
 ]);
+
+const sectionTabsGridClass = computed(() => {
+  switch (sectionTabs.value.length) {
+    case 1:
+      return "grid-cols-1";
+    case 2:
+      return "grid-cols-2";
+    case 3:
+      return "grid-cols-2 lg:grid-cols-3";
+    case 4:
+      return "grid-cols-2 lg:grid-cols-4";
+    default:
+      return "grid-cols-2 lg:grid-cols-5";
+  }
+});
 
 // Build a port-number → {label, protocol} lookup from the info.json ports array
 function buildPortLabels(ports) {
@@ -608,12 +623,12 @@ onUnmounted(() => {
       </div>
 
       <!-- ── Section Navigation ───────────────────────────────────────────────────────── -->
-      <div class="grid grid-cols-2 gap-2 rounded-2xl p-2 lg:grid-cols-5" style="background: var(--surface-muted)">
+      <div class="grid gap-2 rounded-2xl p-2" :class="sectionTabsGridClass" style="background: var(--surface-muted)">
         <button
           v-for="sec in sectionTabs"
           :key="sec.id"
           @click="activeSection = sec.id"
-          class="group flex min-h-14 items-center gap-3 rounded-xl px-3.5 py-3 text-left transition-all duration-300"
+          class="group flex w-full min-h-13 items-center gap-3 rounded-xl px-3.5 py-3 text-left transition-all duration-300"
           :class="activeSection === sec.id
             ? 'bg-white dark:bg-zinc-800 smooth-shadow'
             : 'hover:bg-white/60 dark:hover:bg-zinc-800/60'"
@@ -627,10 +642,7 @@ onUnmounted(() => {
           </div>
 
           <div class="min-w-0 flex-1">
-            <div class="text-[10px] font-bold uppercase tracking-[0.18em]" style="color: var(--text-secondary)">
-              Section
-            </div>
-            <div class="mt-0.5 text-sm font-semibold leading-tight">
+            <div class="text-sm font-semibold leading-tight">
               {{ sec.label }}
             </div>
           </div>
