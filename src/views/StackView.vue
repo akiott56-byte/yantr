@@ -429,15 +429,15 @@ onUnmounted(() => {
     <!-- Content -->
     <div v-else-if="stack" class="max-w-5xl mx-auto px-4 sm:px-8 py-8 space-y-4 animate-fadeIn">
       <!-- ── App Header ───────────────────────────────────────────────────────────── -->
-      <div class="rounded-2xl p-5 sm:p-6 smooth-shadow" style="background: var(--surface)">
+      <div class="mb-3 px-1 pb-3 sm:mb-4 sm:pb-4">
         <div class="flex items-start gap-4 sm:gap-5">
           <!-- Logo -->
           <div
-            class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl shrink-0 flex items-center justify-center overflow-hidden border border-gray-100 dark:border-zinc-800 hover:scale-105 transition-transform"
+            class="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl shrink-0 flex items-center justify-center overflow-hidden border border-gray-100 dark:border-zinc-800 hover:scale-105 transition-transform"
             style="background: var(--surface-muted)"
           >
             <img v-if="stack.app?.logo" :src="stack.app.logo" :alt="stack.app.name" class="w-full h-full object-contain" loading="lazy" />
-            <Bot v-else :size="28" class="text-gray-400 dark:text-zinc-500" />
+            <Bot v-else :size="34" class="text-gray-400 dark:text-zinc-500" />
           </div>
 
           <!-- Info -->
@@ -474,24 +474,6 @@ onUnmounted(() => {
 
             <!-- Actions -->
             <div class="flex flex-wrap items-center gap-2">
-              <a
-                v-if="stack.app?.website"
-                :href="stack.app.website"
-                target="_blank"
-                class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg border border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700 hover:scale-[1.03] active:scale-95 transition-all"
-                style="color: var(--text-secondary)"
-              >
-                <Globe :size="13" />{{ t("stackView.website") }}
-              </a>
-              <button
-                v-if="stack.app"
-                @click="router.push(`/apps/${stack.appname || stack.appId}`)"
-                class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg border border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700 hover:scale-[1.03] active:scale-95 transition-all"
-                style="color: var(--text-secondary)"
-              >
-                <ExternalLink :size="13" />{{ t("stackView.appPage") }}
-              </button>
-
               <span class="flex-1"></span>
 
               <!-- Custom app badge -->
@@ -502,9 +484,18 @@ onUnmounted(() => {
                 <Bot :size="13" />{{ t("stackView.builtByYantr") }}
               </div>
 
+              <button
+                v-if="stack.app"
+                @click="router.push(`/apps/${stack.appname || stack.appId}`)"
+                class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg border border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700 hover:scale-[1.03] active:scale-95 transition-all"
+                style="color: var(--text-secondary)"
+              >
+                <ExternalLink :size="13" />{{ t("stackView.appPage") }}
+              </button>
+
               <!-- Update -->
               <button
-                v-else
+                v-if="!stack.app?.customapp"
                 @click="updateStack"
                 :disabled="updating"
                 class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg bg-gray-900 dark:bg-zinc-100 text-white dark:text-gray-900 hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
