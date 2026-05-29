@@ -1,21 +1,13 @@
 <script setup>
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { MessageCircle, Zap, GitPullRequest, ShieldCheck, ArrowUpRight, Github, Bug, GitBranch, ExternalLink } from "lucide-vue-next";
+import { ArrowUpRight, Github, Bug, GitBranch, ExternalLink } from "lucide-vue-next";
 
 const { t } = useI18n();
 
-const benefits = computed(() => [
-  { icon: MessageCircle, title: t("sponsorCard.benefits.devAccess.title") },
-  { icon: Zap, title: t("sponsorCard.benefits.roadmap.title") },
-  { icon: GitPullRequest, title: t("sponsorCard.benefits.earlyBuilds.title") },
-  { icon: ShieldCheck, title: t("sponsorCard.benefits.badge.title") },
-]);
-
-const links = computed(() => [
+const links = [
   { title: t("home.externalLinks.github"), href: "https://github.com/besoeasy/Yantr", icon: Github },
   { title: t("home.externalLinks.reportIssue"), href: "https://github.com/besoeasy/yantr/issues", icon: Bug },
-]);
+];
 
 const rawBuildTimestamp = import.meta.env.VITE_BUILD_TIMESTAMP;
 const buildDate = rawBuildTimestamp ? new Date(rawBuildTimestamp) : null;
@@ -100,19 +92,6 @@ const buildTimeAgo = formatTimeAgo(buildDate);
         </span>
         <ExternalLink class="ml-3 h-3.5 w-3.5 shrink-0 text-(--text-secondary) transition-all duration-300 group-hover/link:text-(--text-primary) group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
       </a>
-      </div>
-    </div>
-
-    <div class="mt-5 grid grid-cols-2 gap-2 sm:gap-3">
-      <div
-        v-for="benefit in benefits"
-        :key="benefit.title"
-        class="rounded-2xl bg-gray-50 px-3 py-3 dark:bg-zinc-900/70 sm:px-3.5"
-      >
-        <component :is="benefit.icon" class="h-4 w-4 text-amber-500" />
-        <p class="mt-2 text-[11px] font-medium leading-snug text-(--text-secondary) sm:text-xs">
-          {{ benefit.title }}
-        </p>
       </div>
     </div>
 

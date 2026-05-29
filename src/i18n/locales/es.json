@@ -556,28 +556,9 @@
   },
   "sponsorCard": {
     "label": "Patrocinador",
-    "perksIncluded": "Beneficios incluidos",
     "title": "Financia Yantr. Libre para siempre.",
     "description": "Apoya Yantr en GitHub Sponsors — mantén el proyecto gratuito e influye directamente en su dirección.",
-    "cta": "Patrocinar en GitHub",
-    "benefits": {
-      "devAccess": {
-        "title": "Acceso directo al equipo",
-        "desc": "Canal privado con el equipo principal — no una cola de tickets."
-      },
-      "roadmap": {
-        "title": "Dar forma al Roadmap",
-        "desc": "Tus solicitudes de funciones se priorizan primero, cada sprint."
-      },
-      "earlyBuilds": {
-        "title": "Builds anticipados",
-        "desc": "Acceso a versiones previas antes del anuncio público."
-      },
-      "badge": {
-        "title": "Insignia de Patrocinador",
-        "desc": "Acreditado en el README y en los lanzamientos como patrocinador principal."
-      }
-    }
+    "cta": "Patrocinar en GitHub"
   },
   "communitiesCard": {
     "label": "Comunidades",

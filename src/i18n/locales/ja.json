@@ -556,28 +556,9 @@
   },
   "sponsorCard": {
     "label": "スポンサー",
-    "perksIncluded": "特典あり",
     "title": "Yantr を支援して、永遠に無料で。",
     "description": "GitHub Sponsors で Yantr を支援 — プロジェクトを無料に保ち、その方向性に直接影響を与えましょう。",
-    "cta": "GitHub でスポンサーになる",
-    "benefits": {
-      "devAccess": {
-        "title": "開発者への直接アクセス",
-        "desc": "コアチームとのプライベートチャンネル — チケットキューではありません。"
-      },
-      "roadmap": {
-        "title": "ロードマップを形成",
-        "desc": "機能リクエストはすべてのスプリントで最初にトリアージされます。"
-      },
-      "earlyBuilds": {
-        "title": "早期ビルド",
-        "desc": "公式発表前にプレリリース版にアクセスできます。"
-      },
-      "badge": {
-        "title": "スポンサーバッジ",
-        "desc": "READMEとリリースにコアバッカーとしてクレジットされます。"
-      }
-    }
+    "cta": "GitHub でスポンサーになる"
   },
   "communitiesCard": {
     "label": "コミュニティ",
