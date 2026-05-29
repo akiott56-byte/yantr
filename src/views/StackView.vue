@@ -205,6 +205,20 @@ const showVolumeMenu = ref({});
 // Top-level section navigation
 const activeSection = ref("ports"); // 'ports' | 'auth' | 'containers' | 'storage' | 'config'
 
+const sectionTabs = computed(() => [
+  ...(namedVolumes.value.length > 0 || otherMounts.value.length > 0
+    ? [{ id: "storage", label: t("stackView.storageVolumes"), icon: HardDrive, tone: "text-emerald-500" }]
+    : []),
+  { id: "ports", label: t("stackView.openAnotherPort"), icon: Plus, tone: "text-blue-500" },
+  ...(stack.value?.appId !== "caddy-yantr"
+    ? [{ id: "auth", label: t("stackView.auth"), icon: ShieldCheck, tone: "text-violet-500" }]
+    : []),
+  { id: "containers", label: t("stackView.containers"), icon: Server, tone: "text-amber-500" },
+  ...(stackEnvVars.value.length > 0
+    ? [{ id: "config", label: t("stackView.configurationVariables"), icon: Settings2, tone: "text-slate-500" }]
+    : []),
+]);
+
 // Build a port-number → {label, protocol} lookup from the info.json ports array
 function buildPortLabels(ports) {
   const labels = {};
@@ -548,7 +562,7 @@ onUnmounted(() => {
         <div class="flex items-center justify-between gap-3 mb-1">
           <div class="flex items-center gap-2 min-w-0">
             <div class="text-xs font-bold uppercase tracking-widest" style="color: var(--text-secondary)">
-              {{ t("stackView.ports") || "Ports" }}
+              {{ t("stackView.networkAccess") }}
             </div>
             <span
               v-if="enrichedPorts.length > 0"
@@ -635,25 +649,32 @@ onUnmounted(() => {
       </div>
 
       <!-- ── Section Navigation ───────────────────────────────────────────────────────── -->
-      <div class="flex gap-1 p-1 rounded-xl" style="background: var(--surface-muted)">
+      <div class="grid grid-cols-2 gap-2 rounded-2xl p-2 lg:grid-cols-5" style="background: var(--surface-muted)">
         <button
-          v-for="sec in [
-              ...(namedVolumes.length > 0 || otherMounts.length > 0 ? [{ id: 'storage', label: t('stackView.storageVolumes'), icon: HardDrive }] : []),
-            { id: 'ports', label: t('stackView.openAnotherPort'), icon: Plus },
-            ...(stack.appId !== 'caddy-yantr' ? [{ id: 'auth', label: t('stackView.auth'), icon: ShieldCheck }] : []),
-            { id: 'containers', label: t('stackView.containers'), icon: Server },
-            ...(stackEnvVars.length > 0 ? [{ id: 'config', label: t('stackView.configurationVariables'), icon: Settings2 }] : []),
-          ]"
+          v-for="sec in sectionTabs"
           :key="sec.id"
           @click="activeSection = sec.id"
-          class="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all"
+          class="group flex min-h-14 items-center gap-3 rounded-xl px-3.5 py-3 text-left transition-all duration-300"
           :class="activeSection === sec.id
-            ? 'bg-white dark:bg-zinc-800 smooth-shadow scale-[1.02]'
-            : 'hover:bg-white/60 dark:hover:bg-zinc-800/60 hover:scale-[1.01]'"
+            ? 'bg-white dark:bg-zinc-800 smooth-shadow'
+            : 'hover:bg-white/60 dark:hover:bg-zinc-800/60'"
           :style="activeSection === sec.id ? 'color: var(--text-primary)' : 'color: var(--text-secondary)'"
         >
-          <component :is="sec.icon" :size="14" />
-          <span class="hidden sm:inline">{{ sec.label }}</span>
+          <div
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors duration-300"
+            :style="activeSection === sec.id ? 'background: var(--surface-muted)' : 'background: transparent'"
+          >
+            <component :is="sec.icon" :size="16" :class="sec.tone" />
+          </div>
+
+          <div class="min-w-0 flex-1">
+            <div class="text-[10px] font-bold uppercase tracking-[0.18em]" style="color: var(--text-secondary)">
+              Section
+            </div>
+            <div class="mt-0.5 text-sm font-semibold leading-tight">
+              {{ sec.label }}
+            </div>
+          </div>
         </button>
       </div>
 
