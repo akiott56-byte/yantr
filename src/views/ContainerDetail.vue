@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useNotification } from '../composables/useNotification'
 import { useApiUrl } from '../composables/useApiUrl'
-import { ArrowLeft, ExternalLink, RefreshCw, Trash2, Network, FolderOpen, Terminal, Activity, Cpu, HardDrive, ShieldCheck, Share2, Globe, Database, Lock, Folder, Pause, Play, Download, Clock, Package } from 'lucide-vue-next'
+import { ExternalLink, RefreshCw, Trash2, Network, FolderOpen, Terminal, Activity, Cpu, HardDrive, ShieldCheck, Share2, Globe, Database, Lock, Folder, Pause, Play, Download, Clock, Package } from 'lucide-vue-next'
 import { formatBytes } from '../utils/metrics'
 
 const route = useRoute()
@@ -325,47 +325,6 @@ onUnmounted(() => {
 
 <template>
   <div class="min-h-screen bg-white dark:bg-[#0A0A0A] text-gray-900 dark:text-zinc-100 font-sans selection:bg-blue-500/30">
-     <header class="bg-white/80 dark:bg-[#0A0A0A]/80 backdrop-blur-md border-b border-gray-200 dark:border-zinc-800 sticky top-0 z-30">
-       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
-         <div class="flex items-center gap-2 sm:gap-4 min-w-0">
-           <router-link to="/" class="inline-flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-900 transition-all text-gray-500 dark:text-zinc-400 group shrink-0">
-             <ArrowLeft :size="16" class="group-hover:-translate-x-0.5 transition-transform" />
-           </router-link>
-           
-           <div class="h-4 w-px bg-gray-300 dark:bg-zinc-800 shrink-0"></div>
-
-           <div class="flex items-center gap-1.5 sm:gap-2.5 text-sm min-w-0">
-             <span class="hidden sm:inline text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-zinc-500">{{ t('containerDetail.containers') }}</span>
-             <span class="hidden sm:inline text-gray-300 dark:text-zinc-700">/</span>
-             <span class="font-semibold tracking-tight text-gray-900 dark:text-white truncate" v-if="selectedContainer">{{ selectedContainer.name }}</span>
-             <span v-else class="w-32 h-4 bg-gray-200 dark:bg-zinc-800 animate-pulse rounded"></span>
-           </div>
-         </div>
-
-        <div v-if="selectedContainer" class="flex items-center gap-2">
-          <div v-if="expirationInfo" 
-               class="flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wider"
-               :class="{
-                 'bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400': expirationInfo.urgency === 'critical',
-                 'bg-orange-50 dark:bg-orange-500/10 border-orange-200 dark:border-orange-500/20 text-orange-600 dark:text-orange-400': expirationInfo.urgency === 'warning',
-                 'bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20 text-blue-600 dark:text-blue-400': expirationInfo.urgency === 'normal'
-               }"
-               :title="`${t('containerDetail.expiresAt')}: ${expirationInfo.expireAt}`">
-            <Clock :size="12" :class="expirationInfo.urgency === 'critical' ? 'animate-pulse' : ''" />
-            <span>{{ expirationInfo.timeLeft }}</span>
-          </div>
-          
-          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wider"
-            :class="selectedContainer.state === 'running' 
-              ? 'bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/20 text-green-600 dark:text-green-400' 
-              : 'bg-gray-50 dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-gray-600 dark:text-zinc-400'">
-            <div class="w-1.5 h-1.5 rounded-full" :class="selectedContainer.state === 'running' ? 'bg-green-500 animate-pulse' : 'bg-gray-400'"></div>
-            <span>{{ selectedContainer.state }}</span>
-          </div>
-        </div>
-      </div>
-    </header>
-
     <div v-if="!selectedContainer" class="max-w-7xl mx-auto p-8 flex justify-center py-32">
        <div class="w-8 h-8 border-[3px] border-gray-200 dark:border-zinc-800 border-t-blue-500 dark:border-t-blue-500 rounded-full animate-spin"></div>
     </div>
