@@ -1,7 +1,6 @@
 import { docker, log } from "../shared.js";
 import http from "node:http";
 import { startBrowser, stopBrowser, isBrowsing, getBrowserPort, listBrowsers } from "../dufs.js";
-import { getS3Config, restoreVolumeBackup, deleteVolumeBackup } from "../backup.js";
 
 export default async function volumesRoutes(fastify) {
 
@@ -101,26 +100,4 @@ export default async function volumesRoutes(fastify) {
     }
   });
 
-  // POST /api/volumes/:volumeName/restore
-  fastify.post("/api/volumes/:volumeName/restore", async (request, reply) => {
-    const volumeName = request.params.volumeName;
-    const { snapshotId, overwrite = true } = request.body;
-    if (!snapshotId) return reply.code(400).send({ success: false, error: "snapshotId is required" });
-
-    const config = await getS3Config();
-    if (!config) return reply.code(400).send({ success: false, error: "S3 not configured" });
-
-    const result = await restoreVolumeBackup(volumeName, snapshotId, config, overwrite, log);
-    return reply.send({ success: true, ...result });
-  });
-
-  // DELETE /api/volumes/:volumeName/backup/:snapshotId
-  fastify.delete("/api/volumes/:volumeName/backup/:snapshotId", async (request, reply) => {
-    const { volumeName, snapshotId } = request.params;
-    const config = await getS3Config();
-    if (!config) return reply.code(400).send({ success: false, error: "S3 not configured" });
-
-    await deleteVolumeBackup(volumeName, snapshotId, config, log);
-    return reply.send({ success: true, message: "Backup deleted successfully" });
-  });
 }

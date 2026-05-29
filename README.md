@@ -108,7 +108,6 @@ AI models, media servers, and databases run side-by-side without version conflic
 |---|---|
 | **Install** | Pulls images, starts the stack, registers ports |
 | **Update** | Pulls latest images, recreates containers |
-| **Backup** | Encrypted Restic snapshot to local / S3 / B2 |
 | **Remove** | Stops stack, removes containers, cleans volumes |
 
 ### Networking & Remote Access
@@ -118,14 +117,12 @@ AI models, media servers, and databases run side-by-side without version conflic
 - **Cloudflare Tunnel** — publish services publicly without opening your router
 - **Caddy reverse proxy** — add auth and HTTPS in front of any internal app
 
-### Storage & Backups
+### Storage
 - Browse and manage volume data directly from the browser
-- Restic-powered encrypted backups with scheduled runs and point-in-time restore
-- Supports local paths, S3-compatible stores, and Backblaze B2
 
 ### REST API + CLI-Friendly
 
-Every operation — install, remove, logs, backup, status — is available as a JSON endpoint. Automate with `curl`, shell scripts, or cron.
+Every operation — install, remove, logs, status — is available as a JSON endpoint. Automate with `curl`, shell scripts, or cron.
 
 ```bash
 # Check running apps

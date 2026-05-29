@@ -16,7 +16,7 @@ RUN rm -rf node_modules .npm
 
 FROM docker.io/library/node:alpine
 
-RUN apk add --no-cache docker-cli docker-cli-compose wget restic dufs caddy
+RUN apk add --no-cache docker-cli docker-cli-compose wget dufs caddy
 
 WORKDIR /app
 

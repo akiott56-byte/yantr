@@ -17,7 +17,6 @@ import {
   Trash2,
   HardDrive,
   FolderOpen,
-  AlertCircle,
   Eye,
   EyeOff,
   Settings2,
@@ -199,13 +198,9 @@ async function disableCaddyAuth() {
   }
 }
 
-// Browse / Backup state
+// Volume browsing state
 const browsingVolume = ref({});
 const showVolumeMenu = ref({});
-const s3Configured = ref(false);
-const volumeBackups = ref({});
-const backingUp = ref(false);
-const showRestoreMenu = ref({});
 
 // Top-level section navigation
 const activeSection = ref("ports"); // 'ports' | 'auth' | 'containers' | 'storage' | 'config'
@@ -263,7 +258,7 @@ const portServices = computed(() => {
 
 const needsPortServiceSelection = computed(() => portServices.value.length > 1);
 
-// Collect all unique mounts across all services (includes svcId for backup ops)
+// Collect all unique mounts across all services
 const allMounts = computed(() => {
   if (!stack.value) return [];
   const seen = new Set();
@@ -282,7 +277,7 @@ const allMounts = computed(() => {
   return result;
 });
 
-// Named Docker volumes only — these support browse / backup / restore
+// Named Docker volumes only
 const namedVolumes = computed(() => allMounts.value.filter((m) => m.type === "volume" && m.name));
 
 // Bind mounts and tmpfs — shown in a simple compact list
@@ -406,7 +401,7 @@ async function removeStack() {
 
 // ── lifecycle ─────────────────────────────────────────────────────────────────
 
-// ── Browse / Backup / Restore ────────────────────────────────────────────────
+// ── Volume browsing ──────────────────────────────────────────────────────────
 
 async function browseVolume(volumeName, expiryMinutes = 60) {
   browsingVolume.value[volumeName] = true;
@@ -430,170 +425,8 @@ async function browseVolume(volumeName, expiryMinutes = 60) {
   }
 }
 
-async function checkS3Config() {
-  try {
-    const res = await fetch(`${apiUrl.value}/api/backup/config`);
-    const data = await res.json();
-    s3Configured.value = data.configured;
-  } catch (e) {
-    /* silent */
-  }
-}
-
-async function fetchVolumeBackups() {
-  if (!stack.value) return;
-  // Collect unique svcIds that have named volumes
-  const svcIds = [...new Set(namedVolumes.value.map((m) => m.svcId))];
-  const merged = {};
-  await Promise.all(
-    svcIds.map(async (svcId) => {
-      try {
-        const res = await fetch(`${apiUrl.value}/api/containers/${svcId}/backups`);
-        const data = await res.json();
-        if (data.success && data.backups) {
-          Object.assign(merged, data.backups);
-          if (data.configured !== false) s3Configured.value = true;
-        }
-      } catch (e) {
-        /* silent */
-      }
-    }),
-  );
-  volumeBackups.value = merged;
-}
-
-async function backupVolume(svcId) {
-  if (backingUp.value) return;
-  backingUp.value = true;
-  try {
-    const res = await fetch(`${apiUrl.value}/api/containers/${svcId}/backup`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = await res.json();
-    if (data.success) {
-      toast.success(t("stackView.backupStarted"));
-      pollBackupJob(data.jobId);
-    } else {
-      toast.error(data.error || t("stackView.failedToStartBackup"));
-    }
-  } catch (e) {
-    toast.error(t("stackView.failedToStartBackup"));
-  } finally {
-    backingUp.value = false;
-  }
-}
-
-async function backupAll() {
-  if (backingUp.value) return;
-  const svcIds = [...new Set(namedVolumes.value.map((m) => m.svcId))];
-  for (const svcId of svcIds) await backupVolume(svcId);
-}
-
-function pollBackupJob(jobId) {
-  const iv = setInterval(async () => {
-    try {
-      const res = await fetch(`${apiUrl.value}/api/backup/jobs/${jobId}`);
-      const data = await res.json();
-      if (data.success && data.job) {
-        if (data.job.status === "completed") {
-          clearInterval(iv);
-          toast.success(t("stackView.backupCompleted"));
-          await fetchVolumeBackups();
-        } else if (data.job.status === "failed") {
-          clearInterval(iv);
-          toast.error(t("stackView.backupFailed", { error: data.job.error }));
-        }
-      }
-    } catch (e) {
-      clearInterval(iv);
-    }
-  }, 2000);
-}
-
-async function restoreBackup(volumeName, snapshotId) {
-  if (!confirm(t("stackView.restoreConfirm", { volume }))) return;
-  try {
-    const res = await fetch(`${apiUrl.value}/api/volumes/${volumeName}/restore`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ snapshotId, overwrite: true }),
-    });
-    const data = await res.json();
-    if (data.success) {
-      toast.success(t("stackView.restoreStarted"));
-      pollRestoreJob(data.jobId);
-    } else {
-      toast.error(data.error || t("stackView.failedToStartRestore"));
-    }
-  } catch (e) {
-    toast.error(t("stackView.failedToStartRestore"));
-  }
-  showRestoreMenu.value[volumeName] = false;
-}
-
-function pollRestoreJob(jobId) {
-  const iv = setInterval(async () => {
-    try {
-      const res = await fetch(`${apiUrl.value}/api/restore/jobs/${jobId}`);
-      const data = await res.json();
-      if (data.success && data.job) {
-        if (data.job.status === "completed") {
-          clearInterval(iv);
-          toast.success(t("stackView.restoreCompleted"));
-        } else if (data.job.status === "failed") {
-          clearInterval(iv);
-          toast.error(t("stackView.restoreFailed", { error: data.job.error }));
-        }
-      }
-    } catch (e) {
-      clearInterval(iv);
-    }
-  }, 2000);
-}
-
-async function deleteBackupFile(volumeName, snapshotId) {
-  if (!confirm(t("stackView.deleteBackupConfirm"))) return;
-  try {
-    const res = await fetch(`${apiUrl.value}/api/volumes/${volumeName}/backup/${snapshotId}`, { method: "DELETE" });
-    const data = await res.json();
-    if (data.success) {
-      toast.success(t("stackView.backupDeleted"));
-      await fetchVolumeBackups();
-    } else toast.error(data.error || t("stackView.failedToDeleteBackup"));
-  } catch (e) {
-    toast.error(t("stackView.failedToDeleteBackup"));
-  }
-}
-
-function toggleRestoreMenu(volumeName) {
-  showRestoreMenu.value[volumeName] = !showRestoreMenu.value[volumeName];
-}
-
-function hasBackups(volumeName) {
-  return volumeBackups.value[volumeName]?.length > 0;
-}
-
-function getLatestBackupAge(volumeName) {
-  const backups = volumeBackups.value[volumeName];
-  if (!backups?.length) return "Never";
-  const diffMs = Date.now() - new Date(backups[0].timestamp);
-  const m = Math.floor(diffMs / 60000);
-  const h = Math.floor(m / 60);
-  const d = Math.floor(h / 24);
-  if (d > 0) return `${d}d ago`;
-  if (h > 0) return `${h}h ago`;
-  if (m > 0) return `${m}m ago`;
-  return "Just now";
-}
-
-function formatBackupDate(ts) {
-  return new Date(ts).toLocaleString();
-}
-
 onMounted(async () => {
   await fetchStack();
-  await Promise.all([checkS3Config(), fetchVolumeBackups()]);
   refreshInterval = setInterval(fetchStack, 8000);
 });
 
@@ -991,18 +824,6 @@ onUnmounted(() => {
 
       <!-- STORAGE SECTION -->
       <div v-show="activeSection === 'storage'" class="space-y-4 animate-fadeIn">
-        <div class="flex items-center gap-3 flex-wrap">
-          <div v-if="!s3Configured" class="flex items-center gap-2 px-4 py-3 rounded-xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20">
-            <AlertCircle :size="15" class="text-amber-600 dark:text-amber-400 shrink-0" />
-            <p class="text-xs text-amber-900 dark:text-amber-300">
-              <span class="font-bold">{{ t("stackView.s3NotConfigured") }}</span>
-              <router-link to="/backup-config" class="underline hover:text-amber-700 dark:hover:text-amber-200 font-extrabold ml-1">{{ t("stackView.configureNow") }}</router-link>
-              {{ t("stackView.toEnableBackups") }}
-            </p>
-          </div>
-          <span class="flex-1"></span>
-          <button v-if="s3Configured && namedVolumes.length > 0" @click="backupAll" :disabled="backingUp" class="text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl bg-gray-900 dark:bg-zinc-100 text-white dark:text-gray-900 hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">{{ backingUp ? t("stackView.backingUp") : t("stackView.backupAll") }}</button>
-        </div>
         <div v-if="namedVolumes.length > 0" class="space-y-3">
           <div class="text-xs font-bold uppercase tracking-widest" style="color: var(--text-secondary)">{{ t("stackView.storageVolumes") }}</div>
           <div v-for="(vol, i) in namedVolumes" :key="vol.name" class="rounded-2xl p-5 border border-gray-100 dark:border-zinc-800 smooth-shadow hover:smooth-shadow-lg hover:-translate-y-0.5 transition-all group" style="background: var(--surface)">
@@ -1015,7 +836,6 @@ onUnmounted(() => {
                 <div class="font-mono text-xs truncate mt-0.5" style="color: var(--text-secondary)">{{ vol.destination }}</div>
                 <div class="flex items-center gap-3 mt-2 text-xs flex-wrap" style="color: var(--text-secondary)">
                   <span>{{ t("stackView.serviceLabel") }} <span class="font-bold px-1.5 py-0.5 rounded-md ml-1 bg-gray-100 dark:bg-zinc-800" style="color: var(--text-primary)">{{ vol.svcName }}</span></span>
-                  <span v-if="s3Configured">{{ t("stackView.backupLabel") }} <span class="font-bold px-1.5 py-0.5 rounded-md ml-1 bg-gray-100 dark:bg-zinc-800" style="color: var(--text-primary)">{{ getLatestBackupAge(vol.name) }}</span></span>
                 </div>
               </div>
             </div>
@@ -1030,23 +850,6 @@ onUnmounted(() => {
                 <button @click="browseVolume(vol.name, 60)" class="px-3 py-2 text-xs font-bold uppercase tracking-wider bg-gray-900 dark:bg-zinc-100 text-white dark:text-black rounded-xl hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all" :title="t('stackView.oneHourAccess')">1H</button>
                 <button @click="browseVolume(vol.name, 0)" class="px-3 py-2 text-xs font-bold uppercase tracking-wider rounded-xl border border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700 hover:scale-[1.03] active:scale-95 transition-all" style="background: var(--surface-muted); color: var(--text-secondary)" :title="t('stackView.permanentAccess')">Perm</button>
               </template>
-              <button @click="backupVolume(vol.svcId)" :disabled="backingUp || !s3Configured" class="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider bg-gray-900 dark:bg-zinc-100 text-white dark:text-black rounded-xl hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed hover:scale-[1.03] active:scale-95 transition-all">{{ t("stackView.backup") }}</button>
-              <button @click="toggleRestoreMenu(vol.name)" :disabled="!hasBackups(vol.name) || !s3Configured" class="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider border border-gray-200 dark:border-zinc-800 rounded-xl hover:border-gray-300 dark:hover:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-[1.03] active:scale-95 transition-all" style="background: var(--surface-muted); color: var(--text-secondary)">{{ t("stackView.restore") }}</button>
-            </div>
-            <div v-if="showRestoreMenu[vol.name] && hasBackups(vol.name)" class="mt-4 pt-4 border-t border-gray-100 dark:border-zinc-800 animate-fadeIn">
-              <div class="text-[10px] font-bold uppercase tracking-widest mb-3" style="color: var(--text-secondary)">{{ t("stackView.availableBackups") }}</div>
-              <div class="space-y-2 max-h-52 overflow-y-auto">
-                <div v-for="backup in volumeBackups[vol.name]" :key="backup.snapshotId" class="flex items-center justify-between py-3 px-4 rounded-xl border border-gray-200 dark:border-zinc-700 hover:border-gray-300 dark:hover:border-zinc-600 hover:-translate-x-0.5 transition-all" style="background: var(--surface-muted)">
-                  <div>
-                    <div class="font-mono text-xs font-bold" style="color: var(--text-primary)">{{ formatBackupDate(backup.timestamp) }}</div>
-                    <div class="text-[10px] font-bold uppercase tracking-wider mt-0.5" style="color: var(--text-secondary)">{{ backup.sizeMB != null ? backup.sizeMB + " MB" : "" }}</div>
-                  </div>
-                  <div class="flex gap-2">
-                    <button @click="restoreBackup(vol.name, backup.snapshotId)" class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider border border-gray-200 dark:border-zinc-700 rounded-lg hover:border-gray-300 dark:hover:border-zinc-600 hover:scale-[1.03] active:scale-95 transition-all" style="background: var(--surface); color: var(--text-secondary)">{{ t("stackView.restore") }}</button>
-                    <button @click="deleteBackupFile(vol.name, backup.snapshotId)" class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider border border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-500 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/20 hover:scale-[1.03] active:scale-95 transition-all">{{ t("common.delete") }}</button>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

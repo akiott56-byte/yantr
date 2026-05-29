@@ -18,7 +18,6 @@ import { dirname } from "path";
 import { resolveComposeCommand } from "./compose.js";
 import { errorHandler } from "./utils.js";
 import { startCleanupScheduler } from "./cleanup.js";
-import { startScheduler } from "./backup-scheduler.js";
 import { initAutoUpdate } from "./autoupdate.js";
 import { socketPath, log } from "./shared.js";
 import { stopAll as stopAllBrowsers } from "./dufs.js";
@@ -29,7 +28,6 @@ import stacksRoutes from "./routes/stacks.js";
 import appsRoutes from "./routes/apps.js";
 import imagesRoutes from "./routes/images.js";
 import volumesRoutes from "./routes/volumes.js";
-import backupRoutes from "./routes/backup.js";
 import proxyRoutes from "./routes/proxy.js";
 import { startCaddy, stopCaddy } from "./caddy.js";
 import { getBrowserPort } from "./dufs.js";
@@ -109,7 +107,6 @@ await fastify.register(stacksRoutes);
 await fastify.register(appsRoutes);
 await fastify.register(imagesRoutes);
 await fastify.register(volumesRoutes);
-await fastify.register(backupRoutes);
 await fastify.register(proxyRoutes);
 
 // ─── Error handler ────────────────────────────────────────────────────────────
@@ -142,11 +139,6 @@ try {
 
   log("info", "🧹 Starting automatic cleanup scheduler");
   startCleanupScheduler(11);
-
-  log("info", "⏰ Starting backup scheduler");
-  startScheduler(log).catch((err) => {
-    log("warn", `⚠️  [BACKUP SCHEDULER] ${err.message}`);
-  });
 
   log("info", "🔄 Starting auto-update (self-update scheduler)");
   initAutoUpdate(log);

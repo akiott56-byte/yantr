@@ -971,7 +971,7 @@
             <div class="border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-white/25 hover:bg-white/[0.04] transition-all duration-300">
               <h3 class="text-base font-bold font-sans mb-3 text-white">Where is my data stored?</h3>
               <p class="text-white/50 leading-relaxed text-sm">
-                Your app data stays in standard Docker volumes on your own machine or server. This makes backup and migration straightforward.
+                Your app data stays in standard Docker volumes on your own machine or server. This keeps ownership clear and migration straightforward.
               </p>
             </div>
 
@@ -1458,7 +1458,7 @@
             textColor: "#ffffff",
             px: 84,
             py: 56,
-            desc: "An Express.js HTTP server on port 3000 that exposes every Yantr operation as a clean JSON endpoint — installs, removals, logs, backups, and status checks.",
+            desc: "An Express.js HTTP server on port 3000 that exposes every Yantr operation as a clean JSON endpoint — installs, removals, logs, and status checks.",
             bullets: ["JSON endpoints at :3000", "Install / remove / status / logs", "Auth token supported", "Used by both Web UI and CLI"],
           },
           {
@@ -1483,7 +1483,7 @@
             px: 30,
             py: 87,
             desc: "Any HTTP client or shell script can talk to the REST API. Use curl, wget, or the built-in CLI for headless servers, cron jobs, and automation pipelines.",
-            bullets: ["curl-friendly REST endpoints", "Ideal for cron / systemd", "Scriptable installs & backups", "Works over SSH tunnels"],
+            bullets: ["curl-friendly REST endpoints", "Ideal for cron / systemd", "Scriptable installs & status checks", "Works over SSH tunnels"],
           },
           {
             id: "network",
@@ -1509,23 +1509,6 @@
             desc: "Manages all persistent data directories for installed apps. Performs atomic filesystem operations — ensuring that installs and removals never leave orphaned data.",
             bullets: ["Per-app data isolation", "Atomic install / remove ops", "Clean removal — zero orphans", "Mount point registry"],
           },
-          {
-            id: "backup",
-            icon: "🔒",
-            label: "Backup Engine",
-            tag: "Storage · Restic",
-            color: "#f97316",
-            textColor: "#ffffff",
-            px: 50,
-            py: 87,
-            desc: "Restic-powered scheduled backups for any app's data volume. Supports local paths, S3-compatible, and Backblaze B2 as destinations. Point-in-time restore included.",
-            bullets: [
-              "Restic deduplication & encryption",
-              "Scheduled via cron expressions",
-              "Destinations: local, S3, B2",
-              "One-command restore to any snapshot",
-            ],
-          },
         ];
 
         const EDGES = [
@@ -1536,7 +1519,6 @@
           { from: "daemon", to: "volumes", label: "data ops" },
           { from: "api", to: "webui", label: "JSON polling" },
           { from: "api", to: "cli", label: "REST calls" },
-          { from: "volumes", to: "backup", label: "backup trigger" },
         ];
 
         // Node size

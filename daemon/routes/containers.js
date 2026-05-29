@@ -6,7 +6,6 @@ import {
 } from "../shared.js";
 import { spawnProcess, getBaseAppId } from "../utils.js";
 import { resolveComposeCommand } from "../compose.js";
-import { getS3Config, createContainerBackup, listVolumeBackups } from "../backup.js";
 import { getComposeProcessEnv, getProjectComposeRef, deleteProjectCompose } from "../stack-compose.js";
 
 export default async function containersRoutes(fastify) {
@@ -217,39 +216,4 @@ export default async function containersRoutes(fastify) {
     }
   });
 
-  // POST /api/containers/:id/backup
-  fastify.post("/api/containers/:id/backup", async (request, reply) => {
-    const containerId = request.params.id;
-    log("info", `💾 [POST /api/containers/${containerId}/backup] Creating backup`);
-
-    const containerInfo = await docker.getContainer(containerId).inspect();
-    const volumes = containerInfo.Mounts.filter(m => m.Type === "volume").map(m => m.Name);
-
-    if (volumes.length === 0) {
-      return reply.code(400).send({ success: false, error: "No volumes attached to this container" });
-    }
-
-    const config = await getS3Config();
-    if (!config) {
-      return reply.code(400).send({ success: false, error: "S3 not configured. Please configure S3 settings first." });
-    }
-
-    const result = await createContainerBackup({ containerId, volumes, s3Config: config, log });
-    return reply.send({ success: true, ...result, volumes });
-  });
-
-  // GET /api/containers/:id/backups
-  fastify.get("/api/containers/:id/backups", async (request, reply) => {
-    const containerId = request.params.id;
-    const containerInfo = await docker.getContainer(containerId).inspect();
-    const volumeNames = containerInfo.Mounts.filter(m => m.Type === "volume").map(m => m.Name);
-
-    if (volumeNames.length === 0) return reply.send({ success: true, backups: {} });
-
-    const config = await getS3Config();
-    if (!config) return reply.send({ success: true, backups: {}, configured: false });
-
-    const backups = await listVolumeBackups(volumeNames, config, log);
-    return reply.send({ success: true, backups, configured: true });
-  });
 }

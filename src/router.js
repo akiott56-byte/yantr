@@ -43,21 +43,6 @@ const router = createRouter({
       component: () => import(/* webpackChunkName: "volumes" */ "./views/Volumes.vue"),
     },
     {
-      path: "/backup-config",
-      name: "backup-config",
-      component: () => import(/* webpackChunkName: "backup-config" */ "./views/BackupConfig.vue"),
-    },
-    {
-      path: "/backup-schedules",
-      name: "backup-schedules",
-      component: () => import(/* webpackChunkName: "backup-schedules" */ "./views/BackupSchedules.vue"),
-    },
-    {
-      path: "/backup-volumes",
-      name: "backup-volumes",
-      component: () => import(/* webpackChunkName: "backup-volumes" */ "./views/BackupVolumes.vue"),
-    },
-    {
       path: "/logs",
       name: "logs",
       component: () => import(/* webpackChunkName: "logs" */ "./views/Logs.vue"),
