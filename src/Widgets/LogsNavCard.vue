@@ -8,113 +8,53 @@ const { t } = useI18n();
 </script>
 
 <template>
-  <div class="relative group isolate h-full flex flex-col overflow-hidden rounded-2xl bg-white transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-emerald-500/10 dark:bg-[#0A0A0A] dark:hover:shadow-black/40">
-    <div class="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
-      <div class="absolute inset-x-0 top-0 h-0.5 bg-emerald-500 opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
-      <div class="absolute -left-10 top-10 h-28 w-28 rounded-full bg-emerald-500/10 blur-2xl pulse-cloud"></div>
-      <div class="absolute right-0 top-0 h-24 w-24 rounded-full bg-teal-500/10 blur-2xl pulse-cloud" style="animation-delay: 1.2s"></div>
-    </div>
+  <button
+    type="button"
+    @click="router.push('/logs')"
+    class="group flex h-full w-full flex-col rounded-2xl p-6 text-left transition-all duration-300 hover:-translate-y-0.5 hover:smooth-shadow-lg"
+    style="background: var(--surface); color: var(--text-primary)"
+  >
+    <div class="flex h-full flex-col gap-6">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex min-w-0 items-start gap-3.5">
+          <div
+            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
+            style="background: var(--surface-muted)"
+          >
+            <ClipboardList class="h-5 w-5 text-emerald-500 transition-transform duration-300 group-hover:scale-105" />
+          </div>
 
-    <div class="relative z-10 flex h-full flex-col p-6">
-      <div class="flex items-start gap-4 mb-6">
-        <div class="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-gray-100 bg-gray-50 dark:border-zinc-800 dark:bg-zinc-900 icon-shell">
-          <div class="absolute inset-0 rounded-2xl border border-emerald-500/0 group-hover:border-emerald-500/20 transition-colors duration-500"></div>
-          <ClipboardList class="w-5 h-5 text-gray-400 dark:text-zinc-500 icon-float group-hover:text-emerald-500 transition-colors duration-300" />
+          <div class="min-w-0">
+            <h3 class="text-sm font-semibold tracking-tight">
+              {{ t("home.toolsNavCard.logs") }}
+            </h3>
+            <p class="mt-1 text-xs leading-relaxed" style="color: var(--text-secondary)">
+              {{ t("home.toolsNavCard.logsDesc") }}
+            </p>
+          </div>
         </div>
 
-        <div class="min-w-0">
-          <h3 class="text-sm font-semibold text-gray-900 dark:text-white tracking-tight transition-colors duration-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
-            {{ t("home.toolsNavCard.logs") }}
-          </h3>
-          <div class="mt-1 text-[11px] font-medium uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-            {{ t("home.toolsNavCard.logsDesc") }}
-          </div>
-          <div class="mt-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.18em] text-gray-400 dark:text-zinc-500">
-            <span class="inline-flex h-2 w-2 rounded-full bg-emerald-500 status-ping"></span>
-            <span>Live Output</span>
-          </div>
-        </div>
+        <span class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-500">
+          <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+          Live
+        </span>
       </div>
 
-      <button
-        type="button"
-        @click="router.push('/logs')"
-        class="log-row mt-auto group/btn relative flex items-center justify-between overflow-hidden rounded-xl border border-gray-100 bg-gray-50/95 p-4 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-gray-300 hover:bg-white dark:border-zinc-800/80 dark:bg-zinc-900/60 dark:hover:border-zinc-700 dark:hover:bg-zinc-900"
+      <div
+        class="mt-auto flex items-center justify-between rounded-xl px-4 py-3 transition-colors duration-300 group-hover:bg-emerald-500/5"
+        style="background: var(--surface-muted)"
       >
-        <div class="absolute inset-y-0 left-0 w-1 rounded-r-full bg-emerald-500/0 transition-colors duration-300 group-hover/btn:bg-emerald-500"></div>
-
-        <div class="relative z-10 flex min-w-0 items-center gap-3.5">
-          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 group-hover/btn:scale-105 group-hover/btn:border-gray-300 dark:border-zinc-700 dark:bg-zinc-950/70 dark:group-hover/btn:border-zinc-600">
-            <ClipboardList class="w-4 h-4 text-emerald-500 transition-all duration-300 group-hover/btn:scale-110 group-hover/btn:-translate-y-0.5" />
+        <div class="min-w-0">
+          <div class="text-[10px] font-bold uppercase tracking-[0.18em]" style="color: var(--text-secondary)">
+            System Output
           </div>
-          <div class="flex min-w-0 flex-col text-left">
-            <span class="text-xs font-semibold text-gray-900 dark:text-white">{{ t("home.toolsNavCard.logs") }}</span>
-            <span class="text-[10px] text-gray-500 dark:text-zinc-400">{{ t("home.toolsNavCard.logsDesc") }}</span>
+          <div class="mt-1 text-sm font-semibold">
+            {{ t("home.toolsNavCard.logs") }}
           </div>
         </div>
 
-        <div class="relative z-10 flex items-center gap-2">
-          <span class="text-[10px] font-bold uppercase tracking-[0.18em] text-gray-300 transition-colors duration-300 group-hover/btn:text-emerald-500 dark:text-zinc-600 dark:group-hover/btn:text-emerald-400">Open</span>
-          <ChevronRight class="w-4 h-4 text-gray-400 dark:text-zinc-600 transition-all duration-300 group-hover/btn:text-gray-900 group-hover/btn:translate-x-1 dark:group-hover/btn:text-white" />
-        </div>
-      </button>
+        <ChevronRight class="h-4 w-4 shrink-0 text-emerald-500 transition-transform duration-300 group-hover:translate-x-1" />
+      </div>
     </div>
-  </div>
+  </button>
 </template>
-
-<style scoped>
-@keyframes pulseCloud {
-  0%, 100% { transform: scale(0.92); opacity: 0.4; }
-  50% { transform: scale(1.08); opacity: 0.9; }
-}
-
-@keyframes iconFloat {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-3px) rotate(5deg); }
-}
-
-@keyframes statusPing {
-  0%, 100% { transform: scale(1); opacity: 0.7; }
-  50% { transform: scale(1.35); opacity: 1; }
-}
-
-@keyframes rowReveal {
-  0% { opacity: 0; transform: translateY(8px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-.pulse-cloud {
-  animation: pulseCloud 6.5s ease-in-out infinite;
-}
-
-.icon-shell {
-  animation: pulseCloud 7s ease-in-out infinite;
-}
-
-.icon-float {
-  animation: iconFloat 4s ease-in-out infinite;
-}
-
-.status-ping {
-  animation: statusPing 2.6s ease-in-out infinite;
-}
-
-.log-row {
-  animation: rowReveal 500ms ease-out both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pulse-cloud,
-  .icon-shell,
-  .icon-float,
-  .status-ping,
-  .log-row {
-    animation: none !important;
-  }
-
-  .group,
-  .group\/btn {
-    transition: none !important;
-  }
-}
-</style>
