@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useI18n } from "vue-i18n";
 ({ colSpan: 1 });
-import { Layers, Database, Box, HardDrive, Cpu, MemoryStick, Server, Activity } from "lucide-vue-next";
+import { Cpu, Server, Activity } from "lucide-vue-next";
 import { formatBytes } from "../utils/metrics";
 import { useApiUrl } from "../composables/useApiUrl";
 
@@ -92,44 +92,39 @@ const displayMemParts = computed(() => {
   return { value, unit };
 });
 
-const overviewStats = computed(() => [
+const workloadStats = computed(() => [
   {
     key: "apps",
     label: t("home.overviewPulseCard.apps"),
     value: runningApps.value,
-    icon: Layers,
     tone: "text-blue-500",
   },
   {
     key: "volumes",
     label: t("home.overviewPulseCard.volumes"),
     value: totalVolumes.value,
-    icon: HardDrive,
     tone: "text-violet-500",
   },
   {
     key: "images",
     label: t("home.overviewPulseCard.images"),
     value: imagesCount.value,
-    icon: Database,
     tone: "text-green-500",
   },
   {
     key: "temp",
     label: t("home.overviewPulseCard.temp"),
     value: temporaryCount.value,
-    icon: Box,
     tone: "text-amber-500",
   },
 ]);
 
-const hostStats = computed(() => [
+const hostSummaryStats = computed(() => [
   {
     key: "cpu",
     label: t("quickMetrics.hostMetrics.processors"),
     value: String(displayCores.value),
     suffix: t("quickMetrics.hostMetrics.cores"),
-    icon: Cpu,
     tone: "text-blue-500",
   },
   {
@@ -137,7 +132,6 @@ const hostStats = computed(() => [
     label: t("quickMetrics.hostMetrics.memory"),
     value: displayMemParts.value.value,
     suffix: displayMemParts.value.unit,
-    icon: MemoryStick,
     tone: "text-violet-500",
   },
   {
@@ -149,7 +143,6 @@ const hostStats = computed(() => [
         ? storageInfo.value.usedFormatted
         : "0 B",
     suffix: storageInfo.value.total > 0 ? `${displayStoragePercent.value}%` : "",
-    icon: HardDrive,
     tone: "text-emerald-500",
   },
 ]);
@@ -266,21 +259,32 @@ onUnmounted(() => {
         </span>
       </div>
 
-      <!-- Compact 2-col stats grid — all metrics in one place -->
-      <div class="mt-4 grid grid-cols-2 gap-1.5">
-        <div
-          v-for="(stat, i) in [...overviewStats, ...hostStats]"
-          :key="stat.key"
-          :class="['flex items-center gap-2 rounded-xl bg-gray-50 dark:bg-zinc-900/70 px-3 py-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:smooth-shadow', i === overviewStats.length + hostStats.length - 1 && (overviewStats.length + hostStats.length) % 2 !== 0 ? 'col-span-2' : '']"
-        >
-          <component :is="stat.icon" :class="['h-3.5 w-3.5 shrink-0', stat.tone]" />
-          <div class="min-w-0 flex-1">
-            <p class="text-[9px] font-bold uppercase tracking-[0.15em] text-(--text-secondary) leading-none">{{ stat.label }}</p>
-            <p class="mt-0.5 truncate text-xs font-semibold tracking-tight text-(--text-primary)">
-              {{ stat.value }}<span v-if="stat.suffix" class="ml-1 text-[10px] font-normal text-(--text-secondary)">{{ stat.suffix }}</span>
-            </p>
-          </div>
-        </div>
+      <div class="mt-4 space-y-2.5 rounded-[1.1rem] bg-gray-50 px-3.5 py-3.5 dark:bg-zinc-900/70 sm:px-4">
+        <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-(--text-secondary)">
+          {{ greeting }}
+        </p>
+
+        <p class="text-sm leading-6 text-(--text-secondary)">
+          <template v-for="(stat, index) in workloadStats" :key="stat.key">
+            <span v-if="index > 0" class="mx-1.5 opacity-40">•</span>
+            <span>
+              {{ stat.label }}
+              <span :class="['font-semibold text-(--text-primary)', stat.tone]">{{ stat.value }}</span>
+            </span>
+          </template>
+        </p>
+
+        <p class="text-sm leading-6 text-(--text-secondary)">
+          <template v-for="(stat, index) in hostSummaryStats" :key="stat.key">
+            <span v-if="index > 0" class="mx-1.5 opacity-40">•</span>
+            <span>
+              {{ stat.label }}
+              <span :class="['font-semibold text-(--text-primary)', stat.tone]">
+                {{ stat.value }}<span v-if="stat.suffix" class="ml-1 text-(--text-secondary)">{{ stat.suffix }}</span>
+              </span>
+            </span>
+          </template>
+        </p>
       </div>
     </div>
   </div>
