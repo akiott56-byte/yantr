@@ -1,6 +1,6 @@
 import path from "path";
 import { readFile } from "fs/promises";
-import { docker, getAppsCatalogCached, getContainerEnv, parseAppLabels, appsDir, socketPath, log } from "../shared.js";
+import { docker, getAppsCatalogCached, parseAppLabels, appsDir, socketPath, log } from "../shared.js";
 import { getBaseAppId } from "../utils.js";
 import { resolveComposeCommand } from "../compose.js";
 import { spawnProcess } from "../utils.js";
@@ -15,11 +15,6 @@ import {
   getProjectComposeRef,
   writeProjectCompose,
 } from "../stack-compose.js";
-
-const DOCKER_SYSTEM_KEYS = new Set([
-  "PATH", "HOME", "HOSTNAME", "TERM", "SHLVL", "USER", "LOGNAME", "SHELL",
-  "no_proxy", "NO_PROXY", "HTTP_PROXY", "HTTPS_PROXY", "http_proxy", "https_proxy",
-]);
 
 export default async function stacksRoutes(fastify) {
   async function listProjectContainers(projectId) {
@@ -90,14 +85,6 @@ export default async function stacksRoutes(fastify) {
         }
       }
 
-      let env = [];
-      try {
-        const rawEnv = await getContainerEnv(c.Id);
-        env = rawEnv
-          .map(e => { const idx = e.indexOf("="); return idx >= 0 ? { key: e.slice(0, idx), value: e.slice(idx + 1) } : { key: e, value: "" }; })
-          .filter(v => !DOCKER_SYSTEM_KEYS.has(v.key));
-      } catch {}
-
       return {
         id: c.Id,
         name: c.Names[0]?.replace("/", "") || "unknown",
@@ -108,7 +95,6 @@ export default async function stacksRoutes(fastify) {
         created: c.Created,
         rawPorts: c.Ports || [],
         mounts: [...mountsMap.values()],
-        env,
         service: c.Labels["yantr.service"] || appLabels.service || c.Names[0]?.replace("/", "") || "unknown",
         hasYantrLabel: !!(appLabels.app),
       };

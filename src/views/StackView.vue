@@ -17,9 +17,6 @@ import {
   Trash2,
   HardDrive,
   FolderOpen,
-  Eye,
-  EyeOff,
-  Settings2,
   ChevronRight,
   RotateCcw,
   Plus,
@@ -75,46 +72,6 @@ async function updateStack() {
   }
 }
 const showOnlyDescribedPorts = ref(true);
-
-// Env vars reveal state
-const revealedVars = ref(new Set());
-
-function isSensitive(key) {
-  const k = key.toLowerCase();
-  return (
-    k.includes("password") ||
-    k.includes("secret") ||
-    k.includes("token") ||
-    k.includes("_key") ||
-    k.endsWith("key") ||
-    k.includes("passwd") ||
-    k.includes("_pass") ||
-    k.endsWith("pass") ||
-    k.includes("auth") ||
-    k.includes("credential") ||
-    k.includes("private")
-  );
-}
-
-function toggleReveal(key) {
-  const s = new Set(revealedVars.value);
-  s.has(key) ? s.delete(key) : s.add(key);
-  revealedVars.value = s;
-}
-
-// Aggregate unique env vars across all services (primary service wins on conflict)
-const stackEnvVars = computed(() => {
-  if (!stack.value) return [];
-  const map = new Map();
-  // Process primary service first so its values take precedence
-  const sorted = [...stack.value.services].sort((a, b) => (b.hasYantrLabel ? 1 : 0) - (a.hasYantrLabel ? 1 : 0));
-  for (const svc of sorted) {
-    for (const v of svc.env || []) {
-      if (!map.has(v.key)) map.set(v.key, { ...v, service: svc.service });
-    }
-  }
-  return [...map.values()].sort((a, b) => a.key.localeCompare(b.key));
-});
 
 // ── Caddy Auth deployment ────────────────────────────────────────────────────
 const caddyAuth = ref({ targetPort: "", servePort: "", user: "admin", pass: "" });
@@ -203,7 +160,7 @@ const browsingVolume = ref({});
 const showVolumeMenu = ref({});
 
 // Top-level section navigation
-const activeSection = ref("ports"); // 'ports' | 'auth' | 'containers' | 'storage' | 'config'
+const activeSection = ref("ports"); // 'ports' | 'auth' | 'containers' | 'storage'
 
 const sectionTabs = computed(() => [
   ...(namedVolumes.value.length > 0 || otherMounts.value.length > 0
@@ -214,9 +171,6 @@ const sectionTabs = computed(() => [
     ? [{ id: "auth", label: t("stackView.auth"), icon: ShieldCheck, tone: "text-violet-500" }]
     : []),
   { id: "containers", label: t("stackView.containers"), icon: Server, tone: "text-amber-500" },
-  ...(stackEnvVars.value.length > 0
-    ? [{ id: "config", label: t("stackView.configurationVariables"), icon: Settings2, tone: "text-slate-500" }]
-    : []),
 ]);
 
 // Build a port-number → {label, protocol} lookup from the info.json ports array
@@ -578,23 +532,23 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div v-if="enrichedPorts.length > 0" class="grid gap-2.5 mt-2">
+        <div v-if="enrichedPorts.length > 0" class="mt-2 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           <div
             v-for="(p, i) in visiblePorts"
             :key="i"
-            class="group rounded-2xl border border-gray-100 dark:border-zinc-800 p-3.5 sm:p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-gray-200 dark:hover:border-zinc-700"
+            class="group flex h-full flex-col rounded-2xl p-4 transition-all duration-300 hover:-translate-y-0.5 hover:smooth-shadow-lg"
             style="background: var(--surface)"
           >
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex h-full flex-col gap-4">
               <div class="flex items-start gap-3 min-w-0">
-                <div class="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100 dark:border-zinc-800 transition-all duration-300 group-hover:scale-105 group-hover:-rotate-3" style="background: var(--surface-muted)">
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 group-hover:scale-105" style="background: var(--surface-muted)">
                   <Globe v-if="p.labeledProtocol === 'http' || p.labeledProtocol === 'https'" :size="16" class="text-blue-600 dark:text-blue-400" />
                   <Network v-else :size="16" class="text-gray-500 dark:text-zinc-400" />
                 </div>
 
                 <div class="min-w-0 flex-1">
                   <div class="flex flex-wrap items-center gap-2">
-                    <div class="text-sm font-bold truncate" style="color: var(--text-primary)">
+                    <div class="text-sm font-semibold truncate" style="color: var(--text-primary)">
                       {{ p.label || p.service }}
                     </div>
                     <span class="inline-flex items-center rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-[0.18em] border border-gray-200 dark:border-zinc-800" style="background: var(--surface-muted); color: var(--text-secondary)">
@@ -608,31 +562,36 @@ onUnmounted(() => {
                   <div class="mt-1 text-[11px] uppercase tracking-[0.2em] truncate" style="color: var(--text-secondary)">
                     {{ p.service }}
                   </div>
-
-                  <div class="mt-3 flex flex-wrap items-center gap-2">
-                    <span class="inline-flex items-center rounded-full px-3 py-1.5 font-mono font-bold text-xs bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/20">
-                      :{{ p.hostPort }}
-                    </span>
-                    <ChevronRight :size="14" class="text-gray-300 dark:text-zinc-600" />
-                    <span class="inline-flex items-center rounded-full px-3 py-1.5 font-mono font-bold text-xs border border-gray-200 dark:border-zinc-800" style="color: var(--text-primary)">
-                      {{ p.containerPort }}
-                    </span>
-                  </div>
                 </div>
               </div>
 
-              <div class="flex items-center justify-end sm:justify-start">
+              <div class="rounded-xl px-3.5 py-3" style="background: var(--surface-muted)">
+                <div class="text-[10px] font-bold uppercase tracking-[0.18em]" style="color: var(--text-secondary)">
+                  Port Route
+                </div>
+                <div class="mt-2 flex flex-wrap items-center gap-2">
+                  <span class="inline-flex items-center rounded-full px-3 py-1.5 font-mono font-bold text-xs bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/20">
+                    :{{ p.hostPort }}
+                  </span>
+                  <ChevronRight :size="14" class="text-gray-300 dark:text-zinc-600" />
+                  <span class="inline-flex items-center rounded-full px-3 py-1.5 font-mono font-bold text-xs border border-gray-200 dark:border-zinc-800" style="color: var(--text-primary)">
+                    {{ p.containerPort }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="mt-auto flex">
                 <a
                   v-if="p.protocol === 'tcp'"
                   :href="appUrl(p.hostPort, p.labeledProtocol || 'http')"
                   target="_blank"
-                  class="inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-gray-900 dark:bg-zinc-100 text-white dark:text-gray-900 hover:opacity-90 hover:scale-[1.03] active:scale-95 transition-all duration-300"
+                  class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-bold uppercase tracking-wider bg-gray-900 text-white transition-all duration-300 hover:opacity-90 hover:scale-[1.01] active:scale-95 dark:bg-zinc-100 dark:text-gray-900"
                 >
                   <ExternalLink :size="13" class="transition-transform duration-300 group-hover:translate-x-0.5" />{{ t("stackView.open") }}
                 </a>
                 <span
                   v-else
-                  class="inline-flex items-center rounded-full px-3 py-2 text-[10px] font-bold uppercase tracking-wider border border-gray-200 dark:border-zinc-800"
+                  class="inline-flex min-h-11 w-full items-center justify-center rounded-xl px-3.5 py-2.5 text-[10px] font-bold uppercase tracking-wider border border-gray-200 dark:border-zinc-800"
                   style="color: var(--text-secondary)"
                 >
                   {{ p.protocol.toUpperCase() }}
@@ -895,34 +854,6 @@ onUnmounted(() => {
                 </tr>
               </tbody>
             </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- CONFIG SECTION -->
-      <div v-show="activeSection === 'config'" class="animate-fadeIn pb-8">
-        <div class="flex items-center justify-between mb-4">
-          <div class="text-xs font-bold uppercase tracking-widest" style="color: var(--text-secondary)">{{ t("stackView.configurationVariables") }}</div>
-          <span class="text-xs font-mono font-bold px-2.5 py-1 rounded-lg" style="background: var(--surface-muted); color: var(--text-secondary)">{{ stackEnvVars.length }}</span>
-        </div>
-        <div class="rounded-2xl border border-gray-100 dark:border-zinc-800 overflow-hidden smooth-shadow" style="background: var(--surface)">
-          <div
-            v-for="(v, i) in stackEnvVars"
-            :key="v.key"
-            class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-5 py-4 border-b border-gray-100 dark:border-zinc-800 last:border-0 hover:bg-gray-50 dark:hover:bg-zinc-900/50 transition-colors group/env"
-          >
-            <div class="sm:w-72 shrink-0 min-w-0">
-              <span class="font-mono text-sm font-bold truncate block group-hover/env:text-blue-600 dark:group-hover/env:text-blue-400 transition-colors" style="color: var(--text-primary)" :title="v.key">{{ v.key }}</span>
-              <span v-if="stack.services.length > 1" class="text-[10px] font-bold uppercase tracking-widest mt-0.5 block" style="color: var(--text-secondary)">{{ v.service }}</span>
-            </div>
-            <div class="flex-1 min-w-0 flex items-center justify-between gap-3">
-              <span v-if="!isSensitive(v.key) || revealedVars.has(v.key)" class="font-mono text-sm break-all select-all" style="color: var(--text-primary)">{{ v.value || "—" }}</span>
-              <span v-else class="font-mono text-sm tracking-widest select-none" style="color: var(--text-secondary)">••••••••</span>
-              <button v-if="isSensitive(v.key)" @click="toggleReveal(v.key)" class="shrink-0 p-2 rounded-lg border border-gray-100 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-600 hover:scale-110 active:scale-95 transition-all" style="background: var(--surface-muted); color: var(--text-secondary)" :title="revealedVars.has(v.key) ? t('stackView.hide') : t('stackView.show')">
-                <EyeOff v-if="revealedVars.has(v.key)" :size="14" class="animate-pulse" />
-                <Eye v-else :size="14" />
-              </button>
-            </div>
           </div>
         </div>
       </div>
