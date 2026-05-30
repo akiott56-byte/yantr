@@ -71,19 +71,13 @@ export function initAutoUpdate(logger) {
   log = logger;
   if (process.env.YANTR_SELFUPDATE !== "false") {
     const intervalMinutes = parseFloat(process.env.YANTR_SELFUPDATE_INTERVAL) || 15;
-    setTimeout(
-      () => {
-        runSelfUpdate();
-      },
-      5 * 60 * 1000,
-    );
     setInterval(
       () => {
         if (Math.random() < 0.5) runSelfUpdate();
       },
       intervalMinutes * 60 * 1000,
     );
-    log("info", `🔄 [SELFUPDATE] Scheduler started — every ${intervalMinutes}m with 50% chance (first run in 10m)`);
+    log("info", `🔄 [SELFUPDATE] Scheduler started — every ${intervalMinutes}m with 50% chance`);
   } else {
     log("info", "🔄 [SELFUPDATE] Disabled via YANTR_SELFUPDATE=false");
   }
