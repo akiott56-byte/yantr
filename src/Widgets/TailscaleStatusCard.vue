@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onUnmounted} from 'vue'
 import { useI18n } from 'vue-i18n'
 ({ colSpan: 1 });
-import { Wifi, WifiOff, Shield, ArrowRight, Key, CheckCircle, AlertCircle, Loader, Lock, Globe } from 'lucide-vue-next'
+import { Wifi, WifiOff, Shield, ArrowRight, Key, CheckCircle, AlertCircle, Loader } from 'lucide-vue-next'
 import { useApiUrl } from '../composables/useApiUrl'
 import { useCurrentTime } from '../composables/useCurrentTime'
 
@@ -87,12 +87,6 @@ const deploying = ref(false)
 const deployError = ref('')
 const deploySuccess = ref(false)
 
-const features = [
-  { icon: Lock, label: t('tailscaleSetupCard.wireGuardE2E') },
-  { icon: Globe, label: t('tailscaleSetupCard.zeroPortForward') },
-  { icon: Shield, label: t('tailscaleSetupCard.worksBehindCgnat') },
-]
-
 const isValidToken = computed(() => {
   const k = authKey.value.trim()
   return k.startsWith('tskey-') && k.length >= 30 && !/\s/.test(k)
@@ -176,17 +170,6 @@ async function deploy() {
         <p class="mt-2 max-w-xl text-sm leading-relaxed text-gray-500 dark:text-zinc-400">
           Join this host to your Tailscale network with an auth key. Deploy once, then reach services securely without opening public ports.
         </p>
-      </div>
-
-      <div class="mt-5 space-y-3">
-        <div
-          v-for="feature in features"
-          :key="feature.label"
-          class="flex items-center gap-3 text-gray-600 dark:text-zinc-300"
-        >
-          <component :is="feature.icon" class="h-4 w-4 shrink-0 text-gray-400 transition-colors group-hover:text-blue-500 dark:text-zinc-500" />
-          <span class="text-[12px] font-medium leading-tight">{{ feature.label }}</span>
-        </div>
       </div>
 
       <div class="mt-auto flex flex-col gap-3 pt-5">
