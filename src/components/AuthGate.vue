@@ -28,12 +28,6 @@ const subtitle = computed(() => authState.booting
   ? t('authGate.bootingSubtitle')
   : isSetup.value ? t('authGate.setupSubtitle') : t('authGate.loginSubtitle'))
 
-const guidance = computed(() => [
-  t('authGate.guidance.localOnly'),
-  t('authGate.guidance.publicKeyOnly'),
-  t('authGate.guidance.deterministicSeed'),
-])
-
 const hasPreviewInput = computed(() => (
   Boolean(String(username.value).trim())
   || Boolean(password.value)
@@ -131,29 +125,32 @@ async function submit() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-(--bg-body) text-(--text-primary)">
-    <div class="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center gap-6 px-4 py-8 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)] lg:items-center lg:px-8">
-      <section class="smooth-shadow-lg animate-fadeIn rounded-[28px] bg-(--surface) px-6 py-7 sm:px-8 sm:py-9">
-        <div class="inline-flex items-center gap-2 rounded-full bg-(--surface-muted) px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-(--text-secondary)">
+  <div
+    class="min-h-screen bg-(--bg-body) text-(--text-primary)"
+    style="--bg-body: #000000; --surface: #0a0a0a; --surface-muted: #111111; --text-primary: #f5f5f5; --text-secondary: #a3a3a3"
+  >
+    <div class="mx-auto flex min-h-screen w-full max-w-3xl flex-col justify-center px-4 py-8 sm:px-6 lg:px-8">
+      <section class="smooth-shadow-lg animate-fadeIn rounded-4xl bg-(--surface) px-6 py-8 sm:px-10 sm:py-10">
+        <div class="inline-flex items-center gap-2 rounded-full bg-blue-500/10 px-3 py-1.5 text-xs font-semibold tracking-[0.18em] text-blue-200">
           <ShieldCheck class="h-4 w-4" />
           <span>{{ t('authGate.badge') }}</span>
         </div>
 
-        <div class="mt-5 max-w-2xl">
-          <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h1>
-          <p class="mt-3 text-sm leading-6 text-(--text-secondary) sm:text-base">
+        <div class="mt-6 max-w-2xl">
+          <h1 class="max-w-xl text-4xl font-semibold tracking-tight sm:text-5xl">{{ title }}</h1>
+          <p class="mt-4 max-w-xl text-base leading-7 text-(--text-secondary)">
             {{ subtitle }}
           </p>
         </div>
 
-        <div v-if="authState.booting" class="mt-8 flex items-center gap-3 rounded-2xl bg-(--surface-muted) px-4 py-4 text-sm text-(--text-secondary)">
+        <div v-if="authState.booting" class="mt-10 flex items-center gap-3 rounded-3xl bg-(--surface-muted) px-4 py-4 text-sm text-(--text-secondary) smooth-shadow">
           <LoaderCircle class="h-5 w-5 animate-spin text-(--text-primary)" />
           <span>{{ t('authGate.bootingState') }}</span>
         </div>
 
-        <form v-else class="mt-8 space-y-4" @submit.prevent="submit">
+        <form v-else class="mt-10 space-y-5" @submit.prevent="submit">
           <label class="block">
-            <span class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-(--text-secondary)">
+            <span class="mb-2 flex items-center gap-2 text-sm font-medium text-(--text-secondary)">
               <UserRound class="h-4 w-4" />
               {{ t('authGate.username') }}
             </span>
@@ -162,12 +159,12 @@ async function submit() {
               type="text"
               autocomplete="username"
               :placeholder="t('authGate.usernamePlaceholder')"
-              class="min-h-12 w-full rounded-2xl bg-(--surface-muted) px-4 py-3 text-sm text-(--text-primary) placeholder:text-(--text-secondary)/80"
+              class="smooth-shadow min-h-13 w-full rounded-3xl bg-(--surface-muted) px-4 py-3.5 text-base text-(--text-primary) placeholder:text-(--text-secondary)/70"
             />
           </label>
 
           <label class="block">
-            <span class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-(--text-secondary)">
+            <span class="mb-2 flex items-center gap-2 text-sm font-medium text-(--text-secondary)">
               <KeyRound class="h-4 w-4" />
               {{ t('authGate.password') }}
             </span>
@@ -176,12 +173,12 @@ async function submit() {
               type="password"
               autocomplete="current-password"
               :placeholder="t('authGate.passwordPlaceholder')"
-              class="min-h-12 w-full rounded-2xl bg-(--surface-muted) px-4 py-3 text-sm text-(--text-primary) placeholder:text-(--text-secondary)/80"
+              class="smooth-shadow min-h-13 w-full rounded-3xl bg-(--surface-muted) px-4 py-3.5 text-base text-(--text-primary) placeholder:text-(--text-secondary)/70"
             />
           </label>
 
           <label class="block">
-            <span class="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-(--text-secondary)">
+            <span class="mb-2 flex items-center gap-2 text-sm font-medium text-(--text-secondary)">
               <Fingerprint class="h-4 w-4" />
               {{ t('authGate.pin') }}
             </span>
@@ -191,42 +188,18 @@ async function submit() {
               inputmode="numeric"
               autocomplete="one-time-code"
               :placeholder="t('authGate.pinPlaceholder')"
-              class="min-h-12 w-full rounded-2xl bg-(--surface-muted) px-4 py-3 text-sm text-(--text-primary) placeholder:text-(--text-secondary)/80"
+              class="smooth-shadow min-h-13 w-full rounded-3xl bg-(--surface-muted) px-4 py-3.5 text-base text-(--text-primary) placeholder:text-(--text-secondary)/70"
             />
           </label>
 
-          <p class="rounded-2xl bg-(--surface-muted) px-4 py-3 text-sm leading-6 text-(--text-secondary)">
+          <p class="rounded-3xl bg-(--surface-muted) px-4 py-4 text-sm leading-6 text-(--text-secondary) smooth-shadow">
             {{ t('authGate.seedNote') }}
           </p>
 
-          <p v-if="localError || authState.error" class="rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700 dark:bg-red-500/10 dark:text-red-300">
-            {{ localError || authState.error }}
-          </p>
-
-          <button
-            type="submit"
-            :disabled="submitting"
-            class="smooth-shadow flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-black px-4 py-3 text-sm font-semibold text-white hover:-translate-y-0.5 hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
-          >
-            <LoaderCircle v-if="submitting" class="h-4 w-4 animate-spin" />
-            <LockKeyhole v-else class="h-4 w-4" />
-            <span>{{ submitting ? t('authGate.working') : isSetup ? t('authGate.setupAction') : t('authGate.loginAction') }}</span>
-          </button>
-        </form>
-      </section>
-
-      <aside class="smooth-shadow-lg animate-fadeIn rounded-[28px] bg-(--surface) px-6 py-7 sm:px-8 sm:py-9" style="animation-delay: 70ms">
-        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-(--text-secondary)">{{ t('authGate.sideLabel') }}</p>
-        <h2 class="mt-4 text-2xl font-semibold tracking-tight">{{ t('authGate.sideTitle') }}</h2>
-        <p class="mt-3 text-sm leading-6 text-(--text-secondary)">
-          {{ t('authGate.sideSubtitle') }}
-        </p>
-
-        <div class="mt-6 space-y-4">
-          <div class="space-y-3 rounded-3xl bg-(--bg-body) px-4 py-4 smooth-shadow">
+          <div class="space-y-3 rounded-3xl bg-(--surface-muted) px-4 py-4 smooth-shadow">
             <div class="flex items-start justify-between gap-3">
               <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-(--text-secondary)">{{ t('authGate.previewLabel') }}</p>
+                <p class="text-sm font-medium text-white">{{ t('authGate.previewLabel') }}</p>
                 <p class="mt-1 text-sm leading-6 text-(--text-secondary)">
                   {{ t('authGate.previewHint') }}
                 </p>
@@ -235,7 +208,7 @@ async function submit() {
               <button
                 type="button"
                 :disabled="!previewReady"
-                class="smooth-shadow inline-flex min-h-11 items-center gap-2 rounded-2xl bg-black px-3 py-2 text-xs font-semibold text-white hover:-translate-y-0.5 hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+                class="smooth-shadow inline-flex min-h-11 items-center gap-2 rounded-2xl bg-blue-500 px-3 py-2 text-xs font-semibold text-white hover:-translate-y-0.5 hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
                 @click="copyText(previewPublicKey, t('authGate.messages.publicKeyCopied'))"
               >
                 <Copy class="h-4 w-4" />
@@ -243,7 +216,7 @@ async function submit() {
               </button>
             </div>
 
-            <div class="rounded-2xl bg-(--surface) px-4 py-4 smooth-shadow">
+            <div class="rounded-3xl bg-(--surface) px-4 py-4 smooth-shadow">
               <p v-if="previewLoading" class="flex items-center gap-2 text-sm text-(--text-secondary)">
                 <LoaderCircle class="h-4 w-4 animate-spin text-(--text-primary)" />
                 <span>{{ t('authGate.previewWorking') }}</span>
@@ -257,12 +230,21 @@ async function submit() {
             </div>
           </div>
 
-          <div v-for="item in guidance" :key="item" class="flex items-start gap-3 rounded-2xl bg-(--bg-body) px-4 py-4 smooth-shadow">
-            <ShieldCheck class="mt-0.5 h-4 w-4 shrink-0 text-(--text-primary)" />
-            <p class="text-sm leading-6 text-(--text-secondary)">{{ item }}</p>
-          </div>
-        </div>
-      </aside>
+          <p v-if="localError || authState.error" class="rounded-3xl bg-red-500/10 px-4 py-4 text-sm font-medium text-red-200 smooth-shadow">
+            {{ localError || authState.error }}
+          </p>
+
+          <button
+            type="submit"
+            :disabled="submitting"
+            class="smooth-shadow flex min-h-13 w-full items-center justify-center gap-2 rounded-3xl bg-blue-500 px-4 py-3.5 text-base font-semibold text-white hover:-translate-y-0.5 hover:bg-blue-400 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <LoaderCircle v-if="submitting" class="h-4 w-4 animate-spin" />
+            <LockKeyhole v-else class="h-4 w-4" />
+            <span>{{ submitting ? t('authGate.working') : isSetup ? t('authGate.setupAction') : t('authGate.loginAction') }}</span>
+          </button>
+        </form>
+      </section>
     </div>
   </div>
 </template>
