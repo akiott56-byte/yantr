@@ -643,6 +643,12 @@
     "pin": "PIN",
     "pinPlaceholder": "Add a short PIN",
     "seedNote": "Your password and PIN never leave this browser. Yantr stores only the derived public key on the server.",
+    "previewLabel": "Generated public key",
+    "previewHint": "As you type, Yantr derives the operator public key locally in this browser.",
+    "previewPending": "Enter a username, password, and PIN to generate the operator public key.",
+    "previewIncomplete": "Keep typing until the username is set, the password is at least 8 characters, and the PIN is at least 4 characters.",
+    "previewWorking": "Deriving public key…",
+    "copyKey": "Copy key",
     "setupAction": "Create operator account",
     "loginAction": "Sign in",
     "working": "Working…",
@@ -651,18 +657,20 @@
     "sideSubtitle": "Yantr turns your username, password, and PIN into a deterministic daku identity in the browser, then signs API requests with short-lived auth tokens.",
     "guidance": {
       "localOnly": "Credentials stay local to the browser. The daemon sees only the derived public key and signed tokens.",
-      "publicKeyOnly": "The server stores one operator public key under /data so the identity survives restarts and self-updates.",
+      "publicKeyOnly": "Yantr verifies one operator public key from an env var, a legacy /data config, or the current in-memory setup.",
       "deterministicSeed": "Using the same username, password, and PIN regenerates the same private key on another device or after clearing local storage."
     },
     "messages": {
       "setupComplete": "Operator identity created.",
-      "loginComplete": "Yantr unlocked."
+      "loginComplete": "Yantr unlocked.",
+      "publicKeyCopied": "Public key copied."
     },
     "errors": {
       "usernameRequired": "Username is required.",
       "passwordLength": "Password must be at least 8 characters.",
       "pinLength": "PIN must be at least 4 characters.",
-      "generic": "Authentication failed."
+      "generic": "Authentication failed.",
+      "copyFailed": "Clipboard copy failed."
     }
   }
 }

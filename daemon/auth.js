@@ -1,5 +1,5 @@
 import path from "path";
-import { mkdir, readFile, writeFile } from "fs/promises";
+import { readFile } from "fs/promises";
 import { verifyAuth } from "daku";
 
 const DATA_DIR = process.env.YANTR_DATA_DIR || "/data";
@@ -7,6 +7,7 @@ const AUTH_FILE = path.join(DATA_DIR, "auth.json");
 const PUBLIC_KEY_REGEX = /^[0-9a-f]{66}$/i;
 
 let authConfigCache = undefined;
+let memoryAuthConfig = null;
 
 function normalizeUsername(value) {
   return String(value || "").trim();
@@ -14,6 +15,22 @@ function normalizeUsername(value) {
 
 function normalizePublicKey(value) {
   return String(value || "").trim().toLowerCase();
+}
+
+function readEnvAuthConfig() {
+  const publicKey = normalizePublicKey(
+    process.env.YANTR_DAKU_PUBLIC_KEY
+      || process.env.DAKU_PUBLIC_KEY
+      || process.env.dakupublickey,
+  );
+
+  if (!PUBLIC_KEY_REGEX.test(publicKey)) return null;
+
+  return {
+    username: normalizeUsername(process.env.YANTR_AUTH_USERNAME || ""),
+    publicKey,
+    createdAt: null,
+  };
 }
 
 async function readAuthFile() {
@@ -34,12 +51,18 @@ async function readAuthFile() {
 }
 
 export async function loadAuthConfig({ forceRefresh = false } = {}) {
+  const envConfig = readEnvAuthConfig();
+  if (envConfig) return envConfig;
+
+  if (memoryAuthConfig) return memoryAuthConfig;
   if (!forceRefresh && authConfigCache !== undefined) return authConfigCache;
   authConfigCache = await readAuthFile();
   return authConfigCache;
 }
 
 export async function saveAuthConfig({ username, publicKey }) {
+  if (readEnvAuthConfig()) throw new Error("Auth is managed by the configured daku public key environment variable");
+
   const normalizedUsername = normalizeUsername(username);
   const normalizedPublicKey = normalizePublicKey(publicKey);
 
@@ -52,8 +75,7 @@ export async function saveAuthConfig({ username, publicKey }) {
     createdAt: new Date().toISOString(),
   };
 
-  await mkdir(DATA_DIR, { recursive: true });
-  await writeFile(AUTH_FILE, JSON.stringify(payload, null, 2) + "\n", "utf-8");
+  memoryAuthConfig = payload;
   authConfigCache = payload;
   return payload;
 }

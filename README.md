@@ -60,12 +60,13 @@ docker run -d \
   --network host \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /var/lib/docker/volumes:/var/lib/docker/volumes \
-  -v yantr-data:/data \
   --restart unless-stopped \
   ghcr.io/besoeasy/yantr
 ```
 
 Open **http://localhost:5252** and create the local operator account on first visit.
+
+Authentication is stateless by default: if you do not set a public key env var, Yantr keeps the configured operator key only in memory and clears it on restart or self-update. To pin one operator identity across restarts, pass a daku public key such as `-e dakupublickey=<66-char-hex-public-key>`.
 
 ---
 
