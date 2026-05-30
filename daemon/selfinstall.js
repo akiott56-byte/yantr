@@ -6,7 +6,7 @@
  *   docker run -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/besoeasy/yantr
  *
  * This module detects that the container is NOT running with the full required
- * configuration (host network + volumes mount) and uses the Docker socket to:
+ * configuration (host network + volumes mount + auth data volume) and uses the Docker socket to:
  *
  *   1. Pull the latest image (if not already present)
  *   2. Remove any existing "yantr" container
@@ -24,6 +24,7 @@ import os from "os";
 const CONTAINER_NAME = process.env.YANTR_CONTAINER_NAME || "yantr";
 const IMAGE = process.env.YANTR_IMAGE || "ghcr.io/besoeasy/yantr";
 const SOCKET_PATH = process.env.DOCKER_SOCKET || "/var/run/docker.sock";
+const DATA_VOLUME = process.env.YANTR_DATA_VOLUME || `${CONTAINER_NAME}-data`;
 
 /**
  * Check whether we are already running as the fully-configured container.
@@ -33,6 +34,7 @@ const SOCKET_PATH = process.env.DOCKER_SOCKET || "/var/run/docker.sock";
  *   - It is named CONTAINER_NAME (i.e. it was started by a previous install run)
  *   - It has NetworkMode === "host"
  *   - It has /var/lib/docker/volumes bind-mounted
+ *   - It has a persistent /data volume for auth state
  *
  * If any of these are missing we are the bootstrap (minimal) container and
  * should re-launch ourselves properly.
@@ -57,9 +59,10 @@ async function isFullyConfigured(docker) {
   const hasHostNetwork = hostConfig.NetworkMode === "host";
   const binds = hostConfig.Binds || [];
   const hasVolumeMount = binds.some((b) => b.includes("/var/lib/docker/volumes"));
+  const hasDataMount = binds.some((b) => b.endsWith(":/data") || b.includes(":/data:"));
   const isNamedCorrectly = name === CONTAINER_NAME;
 
-  return hasHostNetwork && hasVolumeMount && isNamedCorrectly;
+  return hasHostNetwork && hasVolumeMount && hasDataMount && isNamedCorrectly;
 }
 
 /**
@@ -116,6 +119,7 @@ export async function runSelfInstallIfNeeded() {
       Binds: [
         `${SOCKET_PATH}:/var/run/docker.sock`,
         "/var/lib/docker/volumes:/var/lib/docker/volumes",
+        `${DATA_VOLUME}:/data`,
       ],
     },
     Env: buildEnv(),
@@ -142,6 +146,7 @@ function buildEnv() {
     "YANTR_SELFUPDATE",
     "YANTR_SELFUPDATE_INTERVAL",
     "DOCKER_SOCKET",
+    "YANTR_DATA_VOLUME",
     "UI_BASE_PATH",
     "VITE_BASE_PATH",
   ];

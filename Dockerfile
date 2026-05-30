@@ -20,6 +20,8 @@ RUN apk add --no-cache docker-cli docker-cli-compose wget dufs caddy
 
 WORKDIR /app
 
+RUN mkdir -p /data
+
 COPY package.json package-lock.json* ./
 
 RUN  npm install --omit=dev

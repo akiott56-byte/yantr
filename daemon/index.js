@@ -21,7 +21,9 @@ import { startCleanupScheduler } from "./cleanup.js";
 import { initAutoUpdate } from "./autoupdate.js";
 import { socketPath, log } from "./shared.js";
 import { stopAll as stopAllBrowsers } from "./dufs.js";
+import { extractBearerToken, verifyYantrAuthToken } from "./auth.js";
 
+import authRoutes from "./routes/auth.js";
 import systemRoutes from "./routes/system.js";
 import containersRoutes from "./routes/containers.js";
 import stacksRoutes from "./routes/stacks.js";
@@ -35,11 +37,40 @@ import http from "node:http";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const PUBLIC_API_PATHS = new Set([
+  "/api/health",
+  "/api/version",
+  "/api/setup/status",
+  "/api/setup/admin",
+  "/api/auth/login",
+]);
 
 const fastify = Fastify({ logger: false });
 
+fastify.decorateRequest("yantrUser", null);
+
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 await fastify.register(fastifyCors, { origin: "*" });
+
+fastify.addHook("onRequest", async (request, reply) => {
+  const pathname = String(request.raw.url || "").split("?")[0] || "/";
+  const isProtectedPath = pathname.startsWith("/browse/") || pathname.startsWith("/api/");
+
+  if (!isProtectedPath || PUBLIC_API_PATHS.has(pathname)) return;
+
+  const result = await verifyYantrAuthToken(extractBearerToken(request));
+  if (!result.config) {
+    return reply.code(503).send({ success: false, error: "Setup required", code: "SETUP_REQUIRED" });
+  }
+  if (!result.ok) {
+    return reply.code(401).send({ success: false, error: "Unauthorized", code: result.reason || "UNAUTHORIZED" });
+  }
+
+  request.yantrUser = {
+    username: result.config.username,
+    publicKey: result.publicKey,
+  };
+});
 
 // ─── Dufs proxy (root scope — must be before static + route registration) ────
 fastify.addHook('onRequest', (req, reply, done) => {
@@ -101,6 +132,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
+await fastify.register(authRoutes);
 await fastify.register(systemRoutes);
 await fastify.register(containersRoutes);
 await fastify.register(stacksRoutes);

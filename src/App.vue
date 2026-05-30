@@ -2,11 +2,14 @@
 import { useRoute } from "vue-router";
 import { Box, Boxes, Layers, HardDrive, ClipboardList, Github, Heart, Home, Moon, Sun, Compass, Check, ChevronDown } from "lucide-vue-next";
 import NotificationBanner from './components/NotificationBanner.vue';
+import AuthGate from './components/AuthGate.vue';
 import { onMounted, onUnmounted, ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { useYantrAuth } from './composables/useYantrAuth';
 
 const route = useRoute();
 const { locale, t } = useI18n();
+const { authState, bootstrapYantrAuth } = useYantrAuth();
 const theme = ref("light");
 const showLanguageMenu = ref(false);
 const languageMenuRef = ref(null);
@@ -63,6 +66,7 @@ onMounted(() => {
   const stored = localStorage.getItem("yantr-theme");
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   setTheme(stored || (prefersDark ? "dark" : "light"));
+  bootstrapYantrAuth();
 
   // Auto-detect browser language on first visit
   if (!localStorage.getItem('yantr-locale')) {
@@ -82,6 +86,8 @@ onUnmounted(() => {
 <template>
   <div class="min-h-screen flex flex-col bg-[#FAFAFA] text-black dark:bg-[#0A0A0A] dark:text-white">
     <NotificationBanner />
+    <AuthGate v-if="authState.booting || !authState.authenticated" />
+    <template v-else>
     <!-- Desktop Sidebar -->
     <aside
       class="hidden md:flex bg-white dark:bg-[#0A0A0A] flex-col items-center w-20 py-6 px-2 fixed h-screen z-50"
@@ -143,27 +149,27 @@ onUnmounted(() => {
               class="flex flex-col items-center gap-[calc(var(--sidebar-size)*0.02)] text-[calc(var(--sidebar-size)*0.22)] font-black uppercase leading-[0.95] text-black dark:text-white"
             >
               <span
-                class="block will-change-transform transition-transform duration-300 ease-out group-hover:-translate-y-[calc(var(--sidebar-size)*0.03)] group-hover:scale-110 group-hover:-rotate-6 group-focus-visible:-translate-y-[calc(var(--sidebar-size)*0.03)] group-focus-visible:scale-110 group-focus-visible:-rotate-6"
+                class="block will-change-transform transition-transform duration-300 ease-out group-hover:translate-y-[calc(-0.03*var(--sidebar-size))] group-hover:scale-110 group-hover:-rotate-6 group-focus-visible:translate-y-[calc(-0.03*var(--sidebar-size))] group-focus-visible:scale-110 group-focus-visible:-rotate-6"
                 style="transition-delay: 0ms"
                 >Y</span
               >
               <span
-                class="block will-change-transform transition-transform duration-300 ease-out group-hover:-translate-y-[calc(var(--sidebar-size)*0.03)] group-hover:scale-110 group-hover:rotate-6 group-focus-visible:-translate-y-[calc(var(--sidebar-size)*0.03)] group-focus-visible:scale-110 group-focus-visible:rotate-6"
+                class="block will-change-transform transition-transform duration-300 ease-out group-hover:translate-y-[calc(-0.03*var(--sidebar-size))] group-hover:scale-110 group-hover:rotate-6 group-focus-visible:translate-y-[calc(-0.03*var(--sidebar-size))] group-focus-visible:scale-110 group-focus-visible:rotate-6"
                 style="transition-delay: 35ms"
                 >A</span
               >
               <span
-                class="block will-change-transform transition-transform duration-300 ease-out group-hover:-translate-y-[calc(var(--sidebar-size)*0.03)] group-hover:scale-110 group-hover:-rotate-6 group-focus-visible:-translate-y-[calc(var(--sidebar-size)*0.03)] group-focus-visible:scale-110 group-focus-visible:-rotate-6"
+                class="block will-change-transform transition-transform duration-300 ease-out group-hover:translate-y-[calc(-0.03*var(--sidebar-size))] group-hover:scale-110 group-hover:-rotate-6 group-focus-visible:translate-y-[calc(-0.03*var(--sidebar-size))] group-focus-visible:scale-110 group-focus-visible:-rotate-6"
                 style="transition-delay: 70ms"
                 >N</span
               >
               <span
-                class="block will-change-transform transition-transform duration-300 ease-out group-hover:-translate-y-[calc(var(--sidebar-size)*0.03)] group-hover:scale-110 group-hover:rotate-6 group-focus-visible:-translate-y-[calc(var(--sidebar-size)*0.03)] group-focus-visible:scale-110 group-focus-visible:rotate-6"
+                class="block will-change-transform transition-transform duration-300 ease-out group-hover:translate-y-[calc(-0.03*var(--sidebar-size))] group-hover:scale-110 group-hover:rotate-6 group-focus-visible:translate-y-[calc(-0.03*var(--sidebar-size))] group-focus-visible:scale-110 group-focus-visible:rotate-6"
                 style="transition-delay: 105ms"
                 >T</span
               >
               <span
-                class="block will-change-transform transition-transform duration-300 ease-out group-hover:-translate-y-[calc(var(--sidebar-size)*0.03)] group-hover:scale-110 group-hover:-rotate-6 group-focus-visible:-translate-y-[calc(var(--sidebar-size)*0.03)] group-focus-visible:scale-110 group-focus-visible:-rotate-6"
+                class="block will-change-transform transition-transform duration-300 ease-out group-hover:translate-y-[calc(-0.03*var(--sidebar-size))] group-hover:scale-110 group-hover:-rotate-6 group-focus-visible:translate-y-[calc(-0.03*var(--sidebar-size))] group-focus-visible:scale-110 group-focus-visible:-rotate-6"
                 style="transition-delay: 140ms"
                 >R</span
               >
@@ -323,6 +329,7 @@ onUnmounted(() => {
     <main class="flex-1 min-h-screen md:ml-20 pb-24 md:pb-0">
       <router-view :key="route.fullPath" />
     </main>
+    </template>
   </div>
 </template>
 

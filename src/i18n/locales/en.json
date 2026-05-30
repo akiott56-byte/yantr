@@ -626,5 +626,43 @@
         "desc": "Ask questions and share ideas on GitHub."
       }
     }
+  },
+  "authGate": {
+    "badge": "Operator Access",
+    "bootingTitle": "Checking local setup",
+    "bootingSubtitle": "Yantr is verifying whether an operator identity has already been configured.",
+    "bootingState": "Checking setup and restoring your local session…",
+    "setupTitle": "Create the Yantr operator identity",
+    "setupSubtitle": "Choose a username, password, and PIN. Yantr derives a deterministic daku key locally and stores only the public key needed to verify future logins.",
+    "loginTitle": "Unlock Yantr",
+    "loginSubtitle": "Enter the same username, password, and PIN you used during setup to regenerate your operator key locally.",
+    "username": "Username",
+    "usernamePlaceholder": "operator",
+    "password": "Password",
+    "passwordPlaceholder": "Use a strong password",
+    "pin": "PIN",
+    "pinPlaceholder": "Add a short PIN",
+    "seedNote": "Your password and PIN never leave this browser. Yantr stores only the derived public key on the server.",
+    "setupAction": "Create operator account",
+    "loginAction": "Sign in",
+    "working": "Working…",
+    "sideLabel": "How It Works",
+    "sideTitle": "One operator key. Local derivation only.",
+    "sideSubtitle": "Yantr turns your username, password, and PIN into a deterministic daku identity in the browser, then signs API requests with short-lived auth tokens.",
+    "guidance": {
+      "localOnly": "Credentials stay local to the browser. The daemon sees only the derived public key and signed tokens.",
+      "publicKeyOnly": "The server stores one operator public key under /data so the identity survives restarts and self-updates.",
+      "deterministicSeed": "Using the same username, password, and PIN regenerates the same private key on another device or after clearing local storage."
+    },
+    "messages": {
+      "setupComplete": "Operator identity created.",
+      "loginComplete": "Yantr unlocked."
+    },
+    "errors": {
+      "usernameRequired": "Username is required.",
+      "passwordLength": "Password must be at least 8 characters.",
+      "pinLength": "PIN must be at least 4 characters.",
+      "generic": "Authentication failed."
+    }
   }
 }

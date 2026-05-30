@@ -60,11 +60,12 @@ docker run -d \
   --network host \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v /var/lib/docker/volumes:/var/lib/docker/volumes \
+  -v yantr-data:/data \
   --restart unless-stopped \
   ghcr.io/besoeasy/yantr
 ```
 
-Open **http://localhost:5252** — that's it. No config files, no accounts, no setup wizard.
+Open **http://localhost:5252** and create the local operator account on first visit.
 
 ---
 
@@ -122,15 +123,7 @@ AI models, media servers, and databases run side-by-side without version conflic
 
 ### REST API + CLI-Friendly
 
-Every operation — install, remove, logs, status — is available as a JSON endpoint. Automate with `curl`, shell scripts, or cron.
-
-```bash
-# Check running apps
-curl http://localhost:5252/api/stacks
-
-# Deploy an app
-curl -X POST http://localhost:5252/api/stack/jellyfin/up
-```
+Every operation — install, remove, logs, status — is available as a JSON endpoint. After first-run setup, the API requires a signed bearer token from the configured operator identity.
 
 ---
 
